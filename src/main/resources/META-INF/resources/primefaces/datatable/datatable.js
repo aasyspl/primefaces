@@ -3,7 +3,6 @@
  */
 PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
-
     isAdvancedSettingsAlreadyLoadedFlag: false,
     isColumnsVisibilityAlreadyLoadedFlag: false,
     isSearchColumnsAlreadyLoadedFlag: false,
@@ -4227,13 +4226,13 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
         this._super();
         this.getTwinRow(this.focusedRow).removeClass('ui-state-hover');
     },
-    
+
     assignFocusedRow: function(row) {
         this._super(row);
 
-        if (!row.parent().attr('tabindex')) {
+        if(!row.parent().attr('tabindex')) {
             this.frozenTbody.trigger('focus');
         }
-    },
+    }
 
 });
