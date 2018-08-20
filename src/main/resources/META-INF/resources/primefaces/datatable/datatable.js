@@ -2,19 +2,27 @@
  * PrimeFaces DataTable Widget
  */
 PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
-    
+
+    isAdvancedSettingsAlreadyLoadedFlag: false,
+    isColumnsVisibilityAlreadyLoadedFlag: false,
+    isSearchColumnsAlreadyLoadedFlag: false,
+
     SORT_ORDER: {
         ASCENDING: 1,
         DESCENDING: -1,
         UNSORTED: 0
     },
-    
+
     init: function(cfg) {
         this._super(cfg);
         
         this.thead = this.getThead(); 
         this.tbody = this.getTbody();
         this.tfoot = this.getTfoot();
+
+        this.isAdvancedSettingsAlreadyLoadedFlag = false;
+        this.isColumnsVisibilityAlreadyLoadedFlag = false;
+        this.isSearchColumnsAlreadyLoadedFlag = false;
         
         if(this.cfg.paginator) {
             this.bindPaginator();
@@ -3613,6 +3621,33 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
            
            e.preventDefault();
         });
+    },
+
+    isAdvancedSettingsAlreadyLoaded: function () {
+        if (this.isAdvancedSettingsAlreadyLoadedFlag) {
+            return true;
+        } else {
+            this.isAdvancedSettingsAlreadyLoadedFlag = true;
+            return false;
+        }
+    },
+
+    isColumnsVisibilityAlreadyLoaded: function () {
+        if (this.isColumnsVisibilityAlreadyLoadedFlag) {
+            return true;
+        } else {
+            this.isColumnsVisibilityAlreadyLoadedFlag = true;
+            return false;
+        }
+    },
+
+    isSearchColumnsAlreadyLoaded: function () {
+        if (this.isSearchColumnsAlreadyLoadedFlag) {
+            return true;
+        } else {
+            this.isSearchColumnsAlreadyLoadedFlag = true;
+            return false;
+        }
     }
 
 });
@@ -4191,13 +4226,13 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
         this._super();
         this.getTwinRow(this.focusedRow).removeClass('ui-state-hover');
     },
-    
+
     assignFocusedRow: function(row) {
         this._super(row);
-        
+
         if(!row.parent().attr('tabindex')) {
             this.frozenTbody.trigger('focus');
         }
     }
-    
+
 });
