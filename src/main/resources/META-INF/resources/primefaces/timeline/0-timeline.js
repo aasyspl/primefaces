@@ -4177,6 +4177,13 @@ links.Timeline.ItemRange.prototype.updatePosition = function (timeline) {
         dom.style.left = left + "px";
         //dom.style.width = Math.max(right - left - 2 * this.borderWidth, 1) + "px"; // TODO: borderWidth
         dom.style.width = Math.max(right - left, 1) + "px";
+
+        //AASYS - check if free and not-available events needs to be resized to match group height
+        if (this.className == "service-schedule-timeline-event-free" || this.className == "service-schedule-employee-not-available") {
+            if (this.group.itemsHeight > 45)
+                dom.style.height = this.group.itemsHeight + "px";
+        }
+        //AASYS
     }
 };
 
@@ -5565,11 +5572,20 @@ links.Timeline.prototype.collision = function(item1, item2, margin) {
         margin = 0;
     }
 
+    // AASYS if item is free time or not available event don't check collision
+    if (item1.item.className == "service-schedule-timeline-event-free" || item1.item.className == "service-schedule-employee-not-available" ||
+        item2.item.className == "service-schedule-timeline-event-free" || item2.item.className == "service-schedule-employee-not-available") {
+        return false;
+    }
+    // AASYS
+
     // calculate if there is overlap (collision)
-    return (item1.left - margin < item2.right &&
-        item1.right + margin > item2.left &&
-        item1.top - margin < item2.bottom &&
-        item1.bottom + margin > item2.top);
+    //AASYS fix to calculate collision with precision to one pixel
+    return (item1.left.toFixed(0) - margin < item2.right.toFixed(0) &&
+        item1.right.toFixed(0) + margin > item2.left.toFixed(0) &&
+        item1.top.toFixed(0) - margin < item2.bottom.toFixed(0) &&
+        item1.bottom.toFixed(0) + margin > item2.top.toFixed(0));
+    //AASYS
 };
 
 
