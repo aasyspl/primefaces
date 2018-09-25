@@ -307,6 +307,9 @@ links.Timeline.prototype.draw = function(data, options) {
     }
 
     this.firstDraw = false;
+    //AASYS - resize groups after drawing timeline
+    this.resizeGroups()
+    //AASYS
 };
 
 
@@ -4177,15 +4180,22 @@ links.Timeline.ItemRange.prototype.updatePosition = function (timeline) {
         dom.style.left = left + "px";
         //dom.style.width = Math.max(right - left - 2 * this.borderWidth, 1) + "px"; // TODO: borderWidth
         dom.style.width = Math.max(right - left, 1) + "px";
-
-        //AASYS - check if free and not-available events needs to be resized to match group height
-        if (this.className == "service-schedule-timeline-event-free" || this.className == "service-schedule-employee-not-available") {
-            if (this.group.itemsHeight > 45)
-                dom.style.height = this.group.itemsHeight + "px";
-        }
-        //AASYS
     }
 };
+
+
+//AASYS - check if free and not-available events needs to be resized to match group height
+links.Timeline.prototype.resizeGroups = function () {
+    var items = this.items;
+    items.forEach(function (item){
+        if(item.className == "service-schedule-timeline-event-free" || item.className == "service-schedule-employee-not-available") {
+            if (item.group.height > 45) {
+                item.dom.style.height = item.group.height + "px";
+            }
+        }
+    })
+};
+//AASYS
 
 /**
  * Check if the item is visible in the timeline, and not part of a cluster
