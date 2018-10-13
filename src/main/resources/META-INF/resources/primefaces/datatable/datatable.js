@@ -1232,11 +1232,8 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                         this.liveScrollActive = false;
 
 
-                        //AASYS 'click' again into: 'check all' checkbox when new data are loaded
-                        if(this.checkAllToggler != undefined && this.checkAllToggler.hasClass('ui-state-active')) {
-                            this.checkAllToggler.removeClass('ui-state-active').children('span.ui-chkbox-icon').addClass('ui-icon-blank').removeClass('ui-icon-check');
-                            this.toggleCheckAll();
-                        }
+                        //AASYS selecting all rows fix
+                        this.aasSelectAllRows(this.scrollOffset, false);
                         //AASYS
                     }
                 });
@@ -1288,11 +1285,8 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                             this.liveScrollActive = false;
 
 
-                            //AASYS 'click' again into: 'check all' checkbox when new data are loaded
-                            if (this.checkAllToggler != undefined && this.checkAllToggler.hasClass('ui-state-active')) {
-                                this.checkAllToggler.removeClass('ui-state-active').children('span.ui-chkbox-icon').addClass('ui-icon-blank').removeClass('ui-icon-check');
-                                this.toggleCheckAll();
-                            }
+                            //AASYS selecting all rows fix
+                            this.aasSelectAllRows(this.cfg.scrollStep, true);
                             //AASYS
                         }
                     });
@@ -1309,6 +1303,43 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             };
 
         PrimeFaces.ajax.Request.handle(options);
+    },
+
+    aasSelectAllRows: function(scrollOffset, scrollUp) {
+        var checked = $("[id$='dtSelectAll']").val() == "true";
+
+        if(!checked)
+            return;
+
+        if(this.cfg.nativeElements) {
+            var checkboxes = this.tbody.find('> tr.ui-datatable-selectable > td.ui-selection-column > :checkbox'),
+                $this = this;
+
+            this.sliceCheckboxesArray(checkboxes, scrollOffset, scrollUp).each(function() {
+                var checkbox = $(this);
+                checkbox.prop('checked', false);
+                $this.unselectRowWithCheckbox(checkbox, true);
+            });
+        }
+        else {
+            var checkboxes = this.tbody.find('> tr.ui-datatable-selectable > td.ui-selection-column .ui-chkbox-box'),
+                $this = this;
+
+            this.sliceCheckboxesArray(checkboxes, scrollOffset, scrollUp).each(function() {
+                $this.selectRowWithCheckbox($(this), true);
+            });
+        }
+
+        //save state
+        this.writeSelections();
+
+    },
+
+    //slicing array of chackboxes because we can not override checkboxes that was loaded before
+    sliceCheckboxesArray: function(checkboxes, scrollOffset, scrollUp) {
+        if(!scrollUp)
+            return checkboxes.slice(scrollOffset, checkboxes.length);
+        return checkboxes.slice(0, scrollOffset);
     },
     
     loadRowsWithVirtualScroll: function(page) {
