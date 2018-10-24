@@ -5590,12 +5590,10 @@ links.Timeline.prototype.collision = function(item1, item2, margin) {
     // AASYS
 
     // calculate if there is overlap (collision)
-    //AASYS fix to calculate collision with precision to one pixel
-    return (item1.left.toFixed(0) - margin < item2.right.toFixed(0) &&
-        item1.right.toFixed(0) + margin > item2.left.toFixed(0) &&
-        item1.top.toFixed(0) - margin < item2.bottom.toFixed(0) &&
-        item1.bottom.toFixed(0) + margin > item2.top.toFixed(0));
-    //AASYS
+    return (item1.left - margin < item2.right &&
+            item1.right + margin > item2.left &&
+            item1.top - margin < item2.bottom &&
+            item1.bottom + margin > item2.top);
 };
 
 
