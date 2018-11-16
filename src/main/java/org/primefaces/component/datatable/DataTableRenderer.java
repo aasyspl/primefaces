@@ -1146,6 +1146,12 @@ public class DataTableRenderer extends DataRenderer {
 
         //Preselection
         boolean selected = table.getSelectedRowKeys().contains(rowKey);
+        //AASYS
+        //override PF selected rows (currently loaded page only) to all selected rows
+        final Object realSelectAll = table.getAttributes().get("realSelectAll");
+        if(realSelectAll != null && ((Boolean) realSelectAll))
+            selected = true;
+
 
         String userRowStyleClass = table.getRowStyleClass();
         String rowStyleClass = rowIndex % 2 == 0 ? DataTable.ROW_CLASS + " " + DataTable.EVEN_ROW_CLASS : DataTable.ROW_CLASS + " " + DataTable.ODD_ROW_CLASS;
