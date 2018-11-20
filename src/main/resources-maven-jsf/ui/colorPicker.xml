@@ -38,6 +38,29 @@
 			<required>false</required>
 			<type>java.lang.String</type>
 		</attribute>
+		<attribute>
+			<name>elementHeight</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<defaultValue>1em</defaultValue>
+		</attribute>
+		<attribute>
+			<name>elementWidth</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<defaultValue>1em</defaultValue>
+		</attribute>
+		<attribute>
+			<name>insideLabel</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<name>verticalCenter</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+			<defaultValue>true</defaultValue>
+		</attribute>
 	</attributes>
 	<resources>
         <resource>

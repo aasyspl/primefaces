@@ -65,7 +65,13 @@ public class ColorPickerRenderer extends CoreRenderer {
             writer.writeAttribute("style", colorPicker.getStyle(), "style");
 
         if(isPopup) {
-            encodeButton(context, clientId, value);
+            //AASYS button properties added
+            String elementHeight = colorPicker.getElementHeight();
+            String elementWidth = colorPicker.getElementWidth();
+            String insideLabel = colorPicker.getInsideLabel();
+            boolean verticalCenter = colorPicker.isVerticalCenter();
+            //AASYS
+            encodeButton(context, clientId, value, elementHeight, elementWidth, insideLabel, verticalCenter);
         } 
         else {
             encodeInline(context, clientId);
@@ -87,7 +93,8 @@ public class ColorPickerRenderer extends CoreRenderer {
         writer.endElement("span");
     }
     
-    protected void encodeButton(FacesContext context, String clientId, String value) throws IOException {
+    protected void encodeButton(FacesContext context, String clientId, String value, String elementHeight, String elementWidth, String
+            insideLabel, boolean verticalCenter) throws IOException {
 		ResponseWriter writer = context.getResponseWriter();
         
         writer.startElement("button", null);
@@ -98,12 +105,23 @@ public class ColorPickerRenderer extends CoreRenderer {
         //text
         writer.startElement("span", null);
         writer.writeAttribute("class", HTML.BUTTON_TEXT_CLASS, null);
-        
-        writer.write("<span id=\""+ clientId + "_livePreview\" style=\"overflow:hidden;width:1em;height:1em;display:block;border:solid 1px #000;text-indent:1em;white-space:nowrap;");
+
+        //AASYS button properties added
+        writer.write("<span id=\""+ clientId + "_livePreview\" style=\"overflow:hidden;width:" + elementWidth + ";height:" + elementHeight
+                + ";display:block;border:solid 1px #000;white-space:nowrap;");
         if(value != null) {
-            writer.write("background-color:#" + value);
+            writer.write("background-color:#" + value + ";");
         }
-        writer.write("\">Live Preview</span>");
+        if (verticalCenter) {
+            writer.write("line-height:" + elementHeight + ";");
+        }
+        if (insideLabel != null) {
+            writer.write("\">"+insideLabel+"</span>");
+        }
+        else {
+            writer.write("\"></span>");
+        }
+        //AASYS button properties added
         
         writer.endElement("span");
 
