@@ -216,7 +216,7 @@ links.Timeline = function(container, options) {
         'clusterMaxItems': 5,
         'style': 'box',
         'customStackOrder': false, //a function(a,b) for determining stackorder amongst a group of items. Essentially a comparator, -ve value for "a before b" and vice versa
-        
+
         // i18n: Timeline only has built-in English text per default. Include timeline-locales.js to support more localized text.
         'locale': 'en',
         'MONTHS': ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -230,7 +230,7 @@ links.Timeline = function(container, options) {
         'NEW': "New",
         'CREATE_NEW_EVENT': "Create new event"
     };
-    
+
     //
     // Now we can set the givenproperties
     //
@@ -291,7 +291,7 @@ links.Timeline = function(container, options) {
  */
 links.Timeline.prototype.draw = function(data, options) {
     if (options) {
-        console.log("WARNING: Passing options in draw() is deprecated. Pass options to the constructur or use setOptions() instead!");       
+        console.log("WARNING: Passing options in draw() is deprecated. Pass options to the constructur or use setOptions() instead!");
         this.setOptions(options);
     }
 
@@ -2995,7 +2995,7 @@ links.Timeline.prototype.onMouseUp = function (event) {
             // Note that the change can be canceled from within an event listener if
             // this listener calls the method cancelChange().
             this.trigger(params.addItem ? 'add' : 'changed');
-            
+
             //retrieve item data again to include changes made to it in the triggered event handlers
             item = this.items[params.itemIndex];
 
@@ -4805,7 +4805,7 @@ links.Timeline.prototype.getCluster = function (index) {
     var clusterData = {},
         cluster = this.clusters[index],
         clusterItems = cluster.items;
-    
+
     clusterData.start = new Date(cluster.start.valueOf());
     if (cluster.type) {
         clusterData.type = cluster.type;
@@ -5581,13 +5581,13 @@ links.Timeline.prototype.collision = function(item1, item2, margin) {
     if (margin == undefined) {
         margin = 0;
     }
-
     // calculate if there is overlap (collision)
-    //AASYS checking collision with precision of 1px
-    return (Math.floor(item1.left) - margin < Math.floor(item2.right) &&
-            Math.floor(item1.right) + margin > Math.floor(item2.left) &&
-            Math.floor(item1.top) - margin < Math.floor(item2.bottom) &&
-            Math.floor(item1.bottom) + margin > Math.floor(item2.top));
+    //AASYS checking collision with 2px reserve
+    var precision = 2;
+    return (Math.floor(item1.left) + precision - margin < Math.floor(item2.right) &&
+            Math.floor(item1.right) - precision + margin > Math.floor(item2.left) &&
+            Math.floor(item1.top) + precision - margin < Math.floor(item2.bottom) &&
+            Math.floor(item1.bottom) - precision + margin > Math.floor(item2.top));
     //AASYS
 };
 
