@@ -22,6 +22,7 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
         this.cfg.myPos = this.cfg.myPos||'left top';
         this.cfg.atPos = this.cfg.atPos||'left bottom';
         this.cfg.active = (this.cfg.active === false) ? false : true;
+        this.cfg.blockTabUntilAjaxCompleted = this.cfg.blockTabUntilAjaxCompleted ||false;
         this.suppressInput = true;
         this.touchToDropdownButton = false;
         
@@ -353,10 +354,19 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
                         break;
 
                     case keyCode.TAB:
-                        if(highlightedItem.length) {
+                        var value = $this.input.val();
+                        var highlightedItemValue = highlightedItem.attr('data-item-label');
+                        // if ((we don't block tab while querying), or (we block tab while querying but we are not querying or old querying
+                        // results matches our new value)) and while all that highlighted item has length
+                        //then we allow user to TAB
+                        if(((!$this.cfg.blockTabUntilAjaxCompleted) ||
+                            ($this.cfg.blockTabUntilAjaxCompleted && (!$this.querying || highlightedItemValue.substring(0,value.length) === value))) && highlightedItem.length){
                             highlightedItem.trigger('click');
+                            $this.hide();
+                        }else{ //we prevent click otherwise
+                            e.preventDefault();
+                            e.stopPropagation();
                         }
-                        $this.hide();
                         break;
                 }
             }
@@ -511,6 +521,13 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
             }
 
             var delay = $this.cfg.delay;
+
+            //we check the same way as search method checks if the search method will fire off after timeout
+            //we do it here because of timeout the search function is executed with
+            //we can't wait for this function to set querying as we need to block it earlier
+            if (this.cfg.active && !(value === undefined) && !(value === null) && !(isSearchingDisabled(this, value)) && !(this.cfg.cache && this.cache[value]) && this.active) {
+                $this.querying = true;
+            }
             $this.timeout = setTimeout(function() {
                 $this.timeout = null;
                 $this.search(value);
@@ -952,6 +969,8 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
     },
     
     deleteTimeout: function() {
+        //clear querying as it could have been set without really invoking search method
+        this.querying = false;
         clearTimeout(this.timeout);
         this.timeout = null;
     }

@@ -628,7 +628,7 @@ public class AutoCompleteRenderer extends InputRenderer {
         String clientId = ac.getClientId(context);
         WidgetBuilder wb = getWidgetBuilder(context);
         wb.initWithDomReady("AutoComplete", ac.resolveWidgetVar(), clientId);
-        
+
         wb.attr("minLength", ac.getMinQueryLength(), 1)
             .attr("delay", ac.getQueryDelay())
             .attr("forceSelection", ac.isForceSelection(), false)
@@ -641,8 +641,10 @@ public class AutoCompleteRenderer extends InputRenderer {
             .attr("autoHighlight", ac.isAutoHighlight(), true)
             .attr("myPos", ac.getMy(), null)
             .attr("atPos", ac.getAt(), null)
-            .attr("active", ac.isActive(), true);
-        
+            .attr("active", ac.isActive(), true)
+            .attr("blockTabUntilAjaxCompleted",ac.isBlockTabUntilAjaxCompleted(), false);
+
+
         if(ac.isCache()) {
             wb.attr("cache", true).attr("cacheTimeout", ac.getCacheTimeout());            
         }
