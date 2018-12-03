@@ -5581,6 +5581,14 @@ links.Timeline.prototype.collision = function(item1, item2, margin) {
     if (margin == undefined) {
         margin = 0;
     }
+
+    // AASYS if item is free time or not available event don't check collision
+    if (item1.item.className == "service-schedule-timeline-event-free" || item1.item.className == "service-schedule-employee-not-available" ||
+        item2.item.className == "service-schedule-timeline-event-free" || item2.item.className == "service-schedule-employee-not-available") {
+        return false;
+    }
+    // AASYS
+
     // calculate if there is overlap (collision)
     //AASYS checking collision with 2px reserve
     var precision = 2;
