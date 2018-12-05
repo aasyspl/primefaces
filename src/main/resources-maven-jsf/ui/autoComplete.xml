@@ -253,6 +253,15 @@
             <defaultValue>...</defaultValue>
             <description>The text shown in panel when the suggested list is greater than maxResults.</description>
         </attribute>
+        <attribute>
+            <name>blockTabUntilAjaxCompleted</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+            <defaultValue>false</defaultValue>
+            <description>If set to true when user pushes TAB button while completeMethod ajax call is being executed the TAB
+                push will be blocked unless user entered value which is a substring of value already fetched and highlighted
+                to choose</description>
+        </attribute>
     </attributes>
     <resources>
         <resource>
