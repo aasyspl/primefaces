@@ -907,7 +907,15 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             }
         });
     },
-    
+
+    /**
+     * AASYS is DT lazy - Has DT html5 attribute 'lazy' and it's value is true
+     * @returns {boolean} true - if is lazy
+     */
+    isLazy: function() {
+        return $(this.jqId).attr('lazy') == 'true';
+    },
+
     initReflow: function() {
         var headerColumns = this.thead.find('> tr > th');
         
@@ -917,7 +925,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.tbody.find('> tr:not(.ui-datatable-empty-message) > td:nth-child(' + (i + 1) + ')').prepend('<span class="ui-column-title">' + title + '</span>');
         }
     },
-    
+
     setupScrolling: function() {
         this.scrollHeader = this.jq.children('.ui-datatable-scrollable-header');
         this.scrollBody = this.jq.children('.ui-datatable-scrollable-body');
@@ -933,43 +941,47 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         this.percentageScrollWidth = this.cfg.scrollWidth && (this.cfg.scrollWidth.indexOf('%') !== -1);
         var $this = this,
         scrollBarWidth = this.getScrollbarWidth() + 'px';
-        
+
         if(this.cfg.scrollHeight) {
             if(this.percentageScrollHeight) {
                 this.adjustScrollHeight();
             }
-            
+
             if(this.hasVerticalOverflow()) {
                 this.scrollHeaderBox.css('margin-right', scrollBarWidth);
                 this.scrollFooterBox.css('margin-right', scrollBarWidth);
             }
         }
-                
+
         this.fixColumnWidths();
-                
+
         if(this.cfg.scrollWidth) {
             if(this.percentageScrollWidth)
                 this.adjustScrollWidth();
             else
                 this.setScrollWidth(parseInt(this.cfg.scrollWidth));
         }
-        
+
         this.cloneHead();
 
-        // AASYS - move by 1 px to allow scrolling up
-        this.scrollStateHolder.val("0,1");
+        // AASYS - restoring scroll state and move by 1 px to allow scrolling up
+        this.restoreScrollState(true);
         // AASYS
-        this.restoreScrollState();
 
         if(this.cfg.liveScroll) {
             this.previousRows = this.scrollOffset > 0 ? this.scrollOffset : (this.previousRows || 0);
-            this.scrollOffset = 0;
+            //AASYS store this value into scrollState  - required of eager DT
+                this.restoreScrollOffsetState();
+                //this.scrollOffset = 0;
+            //AASYS
             this.cfg.liveScrollBuffer = (100 - this.cfg.liveScrollBuffer) / 100;
-            this.shouldLiveScroll = true;       
+            //AASYS store this value into scrollState  - required of eager DT
+                //this.shouldLiveScroll = true;
+            //AASYS
             this.loadingLiveScroll = false;
-            this.allLoadedLiveScroll = $this.cfg.scrollStep >= $this.cfg.scrollLimit;      
+            this.allLoadedLiveScroll = $this.cfg.scrollStep >= $this.cfg.scrollLimit;
         }
-        
+
         if(this.cfg.virtualScroll) {
             var row = this.bodyTable.children('tbody').children('tr.ui-widget-content');
             if(row) {
@@ -977,15 +989,15 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                 this.scrollBody.children('div').css('height', parseFloat((this.cfg.scrollLimit * this.rowHeight) + 'px'));
             }
         }
-        
+
         this.scrollBody.on('scroll.dataTable', function() {
             var scrollLeft = $this.scrollBody.scrollLeft();
             $this.scrollHeaderBox.css('margin-left', -scrollLeft);
             $this.scrollFooterBox.css('margin-left', -scrollLeft);
-            
+
             if($this.cfg.virtualScroll) {
                 var virtualScrollBody = this;
-                
+
                 clearTimeout($this.scrollTimeout);
                 $this.scrollTimeout = setTimeout(function() {
                     var viewportHeight = $this.scrollBody.outerHeight(),
@@ -1008,40 +1020,40 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
                 if((scrollTop >= ((scrollHeight * $this.cfg.liveScrollBuffer) - (viewportHeight))) && $this.shouldLoadLiveScroll()) {
                     $this.loadLiveRows();
-                } else if (scrollTop === 0) {
-                    // AASYS - load previous rows if scrolled up
+                } else if (scrollTop === 0 && $this.isLazy()) {
+                    // AASYS - load previous rows if scrolled up - mechanism only for DT Lazy because Eager have always all data loaded
                     $this.loadPreviousLiveRows();
                     // AASYS
                 }
             }
-            
+
             $this.saveScrollState();
         });
-        
+
         this.scrollHeader.on('scroll.dataTable', function() {
             $this.scrollHeader.scrollLeft(0);
         });
-        
+
         this.scrollFooter.on('scroll.dataTable', function() {
             $this.scrollFooter.scrollLeft(0);
         });
-        
+
         var resizeNS = 'resize.' + this.id;
         $(window).unbind(resizeNS).bind(resizeNS, function() {
             if($this.jq.is(':visible')) {
                 if($this.percentageScrollHeight)
                     $this.adjustScrollHeight();
-                
+
                 if($this.percentageScrollWidth)
                     $this.adjustScrollWidth();
             }
         });
     },
-    
+
     shouldLoadLiveScroll: function() {
         return (!this.loadingLiveScroll && !this.allLoadedLiveScroll);
     },
-            
+
     cloneHead: function() {
         this.theadClone = this.thead.clone();
         this.theadClone.find('th').each(function() {
@@ -1050,16 +1062,16 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             $(this).children().not('.ui-column-title').remove();
         });
         this.theadClone.removeAttr('id').addClass('ui-datatable-scrollable-theadclone').height(0).prependTo(this.bodyTable);
-        
+
         //reflect events from clone to original
         if(this.sortableColumns.length) {
             this.sortableColumns.removeAttr('tabindex').off('blur.dataTable focus.dataTable keydown.dataTable');
-            
+
             var clonedSortableColumns = this.theadClone.find('> tr > th.ui-sortable-column');
             clonedSortableColumns.each(function() {
                 $(this).data('original', $(this).attr('id').split('_clone')[0]);
             });
-                        
+
             clonedSortableColumns.on('blur.dataTable', function() {
                 $(PrimeFaces.escapeClientId($(this).data('original'))).removeClass('ui-state-focus');
             })
@@ -1077,7 +1089,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             });
         }
     },
-            
+
     adjustScrollHeight: function() {
         var relativeHeight = this.jq.parent().innerHeight() * (parseInt(this.cfg.scrollHeight) / 100),
         tableHeaderHeight = this.jq.children('.ui-datatable-header').outerHeight(true),
@@ -1133,22 +1145,45 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         return (this.cfg.scrollHeight && this.bodyTable.outerHeight() > this.scrollBody.outerHeight())
     },
     
-    restoreScrollState: function() {
+    restoreScrollState: function(moveScrollDown) {
         var scrollState = this.scrollStateHolder.val(),
-        scrollValues = scrollState.split(',');
+            scrollValues = scrollState.split(',');
 
         this.scrollBody.scrollLeft(scrollValues[0]);
-        this.scrollBody.scrollTop(scrollValues[1]);
+        var scrollTop = scrollValues[1];
+        if(scrollTop == 0 && moveScrollDown)
+            scrollTop = 1;
+        this.scrollBody.scrollTop(scrollTop);
+        if(scrollValues.length == 2) {   //AASYS: default values from setupScrolling
+            this.shouldLiveScroll = true;
+        }
+        else {
+            this.shouldLiveScroll= "true" == scrollValues[2];
+            this.scrollOffset = parseInt(scrollValues[3]);
+        }
+    },
+
+    /**
+     * Restores scroll offset from scroll state
+     * It is not part of restoreScrollState because into setupScrolling there is used old values of scroll offset
+     */
+    restoreScrollOffsetState: function () {
+        var scrollState = this.scrollStateHolder.val(),
+            scrollValues = scrollState.split(',');
+
+        if(scrollValues.length == 2) {
+            this.scrollOffset = 0;
+        }
     },
     
     saveScrollState: function() {
-        var scrollState = this.scrollBody.scrollLeft() + ',' + this.scrollBody.scrollTop();
-        
+        var scrollState = this.scrollBody.scrollLeft() + ',' + this.scrollBody.scrollTop() + ',' + this.shouldLiveScroll + ',' + this.scrollOffset;
+
         this.scrollStateHolder.val(scrollState);
     },
-    
+
     clearScrollState: function() {
-        this.scrollStateHolder.val('0,0');
+        this.scrollStateHolder.val('0,0,true,0');
     },
     
     fixColumnWidths: function() {
@@ -1208,9 +1243,20 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         this.scrollOffset += this.cfg.scrollStep;
 
         //Disable scroll if there is no more data left
-        if(this.scrollOffset === this.cfg.scrollLimit) {
-            this.shouldLiveScroll = false;
+        //AASYS
+        if(this.isLazy()) {
+            if (this.scrollOffset === this.cfg.scrollLimit) {   //AASYS this if looks like unnecessary - never happen
+                this.shouldLiveScroll = false;
+            }
         }
+        //AASYS determine ending of scroll fix for eager DT
+        else {
+            if (this.scrollOffset >= this.cfg.scrollLimit - this.cfg.scrollStep) {
+                this.shouldLiveScroll = false;
+            }
+        }
+        //AASYS
+
         
         var $this = this,
         options = {
@@ -3756,7 +3802,7 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
         
         this.cloneHead();
 
-        this.restoreScrollState();
+        this.restoreScrollState(false);
         
         if(this.cfg.liveScroll) {
             this.scrollOffset = 0;
