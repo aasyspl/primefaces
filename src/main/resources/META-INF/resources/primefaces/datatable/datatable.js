@@ -971,7 +971,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         if(this.cfg.liveScroll) {
             this.previousRows = this.scrollOffset > 0 ? this.scrollOffset : (this.previousRows || 0);
             //AASYS store this value into scrollState  - required of eager DT
-                this.restoreScrollOffsetState();
+            this.restoreLiveScrollState();
                 //this.scrollOffset = 0;
             //AASYS
             this.cfg.liveScrollBuffer = (100 - this.cfg.liveScrollBuffer) / 100;
@@ -1144,35 +1144,32 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
     hasVerticalOverflow: function() {
         return (this.cfg.scrollHeight && this.bodyTable.outerHeight() > this.scrollBody.outerHeight())
     },
-    
-    restoreScrollState: function(moveScrollDown) {
+
+    restoreScrollState: function (moveScrollDown) {
         var scrollState = this.scrollStateHolder.val(),
             scrollValues = scrollState.split(',');
 
         this.scrollBody.scrollLeft(scrollValues[0]);
         var scrollTop = scrollValues[1];
-        if(scrollTop == 0 && moveScrollDown)
+        if (scrollTop == 0 && moveScrollDown)
             scrollTop = 1;
         this.scrollBody.scrollTop(scrollTop);
-        if(scrollValues.length == 2) {   //AASYS: default values from setupScrolling
-            this.shouldLiveScroll = true;
-        }
-        else {
-            this.shouldLiveScroll= "true" == scrollValues[2];
-            this.scrollOffset = parseInt(scrollValues[3]);
-        }
     },
 
     /**
      * Restores scroll offset from scroll state
      * It is not part of restoreScrollState because into setupScrolling there is used old values of scroll offset
      */
-    restoreScrollOffsetState: function () {
+    restoreLiveScrollState: function () {
         var scrollState = this.scrollStateHolder.val(),
             scrollValues = scrollState.split(',');
 
         if(scrollValues.length == 2) {
             this.scrollOffset = 0;
+            this.shouldLiveScroll = true;
+        } else {
+            this.shouldLiveScroll = "true" == scrollValues[2];
+            this.scrollOffset = parseInt(scrollValues[3]);
         }
     },
     
