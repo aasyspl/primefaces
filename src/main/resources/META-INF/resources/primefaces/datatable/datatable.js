@@ -1365,20 +1365,26 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             });
         }
         else {
-            var checkboxes = this.tbody.find('> tr.ui-datatable-selectable > td.ui-selection-column .ui-chkbox-box'),
-                $this = this;
+            var rows = this.tbody.find('> tr.ui-datatable-selectable'), $this = this;
 
-            this.sliceCheckboxesArray(checkboxes, scrollOffset, scrollUp).each(function() {
-                $this.selectRowWithCheckbox($(this), true);
+            this.sliceCheckboxesArray(rows, scrollOffset, scrollUp).each(function () {
+                if($(this).attr("aria-selected") === 'true') {  //checked that are really selected on backend (row has attribute
+                                                                // aria-selected)
+                    var checkbox = $(this).find('> td.ui-selection-column > :checkbox');
+                    $this.selectRowWithCheckbox(checkbox, true);
+
+                }
+
             });
         }
 
         //save state
         this.writeSelections();
 
+
     },
 
-    //slicing array of chackboxes because we can not override checkboxes that was loaded before
+    //slicing array of checkboxes because we can not override checkboxes that was loaded before
     sliceCheckboxesArray: function(checkboxes, scrollOffset, scrollUp) {
         if(!scrollUp)
             return checkboxes.slice(scrollOffset, checkboxes.length);
