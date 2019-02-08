@@ -1164,7 +1164,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         var scrollState = this.scrollStateHolder.val(),
             scrollValues = scrollState.split(',');
 
-        if(scrollValues.length == 2) {
+        if(scrollValues.length == 2 || this.isLazy()) {
             this.scrollOffset = 0;
             this.shouldLiveScroll = true;
         } else {
@@ -1172,6 +1172,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.scrollOffset = parseInt(scrollValues[3]);
         }
     },
+
     
     saveScrollState: function() {
         var scrollState = this.scrollBody.scrollLeft() + ',' + this.scrollBody.scrollTop() + ',' + this.shouldLiveScroll + ',' + this.scrollOffset;
