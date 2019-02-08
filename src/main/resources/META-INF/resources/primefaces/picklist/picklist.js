@@ -97,88 +97,98 @@ PrimeFaces.widget.PickList = PrimeFaces.widget.BaseWidget.extend({
     },
     
     bindItemEvents: function() {
-        var $this = this;
-        
-        this.items.on('mouseover.pickList', function(e) {
+        //AASYS single and double click handling with 200 delay
+        //needed to handle double click in pickList with attribute withSelectMethod == true
+        var $this = this, clickNumber = 0, DELAY = 200, timer = null;
+
+        this.items.on('mouseover.pickList', function (e) {
             var element = $(this);
 
-            if(!element.hasClass('ui-state-highlight')) {
+            if (!element.hasClass('ui-state-highlight')) {
                 $(this).addClass('ui-state-hover');
             }
         })
-        .on('mouseout.pickList', function(e) {
-            $(this).removeClass('ui-state-hover');
-        })
-        .on('click.pickList', function(e) {
-            //stop propagation
-            if($this.checkboxClick||$this.dragging) {
-                $this.checkboxClick = false;
-                return;
-            }
-            
-            var item = $(this),
-            parentList = item.parent(),
-            metaKey = (e.metaKey||e.ctrlKey);
-            
-            if(!e.shiftKey) {
-                if(!metaKey) {
-                    $this.unselectAll();
+            .on('mouseout.pickList', function (e) {
+                $(this).removeClass('ui-state-hover');
+            })
+            .on('click.pickList', function (e) {
+                //stop propagation
+                if ($this.checkboxClick || $this.dragging) {
+                    $this.checkboxClick = false;
+                    return;
                 }
 
-                if(metaKey && item.hasClass('ui-state-highlight')) {
-                    $this.unselectItem(item, true);
-                } 
-                else {
-                    $this.selectItem(item, true);
-                    $this.cursorItem = item;
-                }
-            }
-            else {
-                $this.unselectAll();
-                
-                if($this.cursorItem && ($this.cursorItem.parent().is(item.parent()))) {
-                    var currentItemIndex = item.index(),
-                    cursorItemIndex = $this.cursorItem.index(),
-                    startIndex = (currentItemIndex > cursorItemIndex) ? cursorItemIndex : currentItemIndex,
-                    endIndex = (currentItemIndex > cursorItemIndex) ? (currentItemIndex + 1) : (cursorItemIndex + 1);
-                    
-                    for(var i = startIndex ; i < endIndex; i++) {
-                        var it = parentList.children('li.ui-picklist-item').eq(i);
-                        
-                        if(it.is(':visible')) {
-                            if(i === (endIndex - 1))
-                                $this.selectItem(it, true);
-                            else
-                                $this.selectItem(it);
+                clickNumber++;
+                var item = $(this),
+                    parentList = item.parent(),
+                    metaKey = (e.metaKey || e.ctrlKey);
+
+                if (clickNumber === 1) {
+                    timer = setTimeout(function () {
+                        clickNumber = 0;
+
+                        if (!e.shiftKey) {
+                            if (!metaKey) {
+                                $this.unselectAll();
+                            }
+
+                            if (metaKey && item.hasClass('ui-state-highlight')) {
+                                $this.unselectItem(item, true);
+                            }
+                            else {
+                                $this.selectItem(item, true);
+                                $this.cursorItem = item;
+                            }
                         }
-                    }
-                } 
-                else {
-                    $this.selectItem(item, true);
-                    $this.cursorItem = item;
+                        else {
+                            $this.unselectAll();
+
+                            if ($this.cursorItem && ($this.cursorItem.parent().is(item.parent()))) {
+                                var currentItemIndex = item.index(),
+                                    cursorItemIndex = $this.cursorItem.index(),
+                                    startIndex = (currentItemIndex > cursorItemIndex) ? cursorItemIndex : currentItemIndex,
+                                    endIndex = (currentItemIndex > cursorItemIndex) ? (currentItemIndex + 1) : (cursorItemIndex + 1);
+
+                                for (var i = startIndex; i < endIndex; i++) {
+                                    var it = parentList.children('li.ui-picklist-item').eq(i);
+
+                                    if (it.is(':visible')) {
+                                        if (i === (endIndex - 1))
+                                            $this.selectItem(it, true);
+                                        else
+                                            $this.selectItem(it);
+                                    }
+                                }
+                            }
+                            else {
+                                $this.selectItem(item, true);
+                                $this.cursorItem = item;
+                            }
+                        }
+
+                        /* For keyboard navigation */
+                        $this.removeOutline();
+                        $this.focusedItem = item;
+                        parentList.trigger('focus.pickList');
+                    }, DELAY)
+                } else {
+                    clearTimeout(timer)
+                    var item = $(this);
+
+                    if ($(this).parent().hasClass('ui-picklist-source'))
+                        $this.transfer(item, $this.sourceList, $this.targetList, 'dblclick');
+                    else
+                        $this.transfer(item, $this.targetList, $this.sourceList, 'dblclick');
+
+                    /* For keyboard navigation */
+                    $this.removeOutline();
+                    $this.focusedItem = null;
+
+                    PrimeFaces.clearSelection();
+                    clickNumber = 0;
                 }
-            }
-            
-            /* For keyboard navigation */
-            $this.removeOutline();
-            $this.focusedItem = item;
-            parentList.trigger('focus.pickList');
-        })
-        .on('dblclick.pickList', function() {
-            var item = $(this);
+            });
 
-            if($(this).parent().hasClass('ui-picklist-source'))
-                $this.transfer(item, $this.sourceList, $this.targetList, 'dblclick');
-            else
-                $this.transfer(item, $this.targetList, $this.sourceList, 'dblclick');
-
-            /* For keyboard navigation */
-            $this.removeOutline();
-            $this.focusedItem = null;
-            
-            PrimeFaces.clearSelection();
-        });
-        
         if(this.cfg.showCheckbox) {
             this.checkboxes.on('mouseover.pickList', function(e) {
                 var chkbox = $(this);
