@@ -759,14 +759,16 @@ PrimeFaces.widget.Timeline = PrimeFaces.widget.DeferredWidget.extend({
      * @param index
      */
     setSelection: function(index) {
-        if (index >= 0) {
-            this.instance.setSelection([{
-                'row': index
-            }]);
-        } else {
-            // unselect all events
-            this.instance.setSelection([]);
-        }    
+        if(this.instance) {
+            if (index >= 0) {
+                this.instance.setSelection([{
+                    'row': index
+                }]);
+            } else {
+                // unselect all events
+                this.instance.setSelection([]);
+            }
+        }
     },
 
     /**
