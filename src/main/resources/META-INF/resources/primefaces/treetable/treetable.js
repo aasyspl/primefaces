@@ -1060,8 +1060,8 @@ PrimeFaces.widget.TreeTable = PrimeFaces.widget.DeferredWidget.extend({
                     params: [
                         {name: $this.id + '_colResize', value: true},
                         {name: $this.id + '_columnId', value: columnHeader.attr('id')},
-                        {name: $this.id + '_width', value: columnHeader.width()},
-                        {name: $this.id + '_height', value: columnHeader.height()}
+                        {name: $this.id + '_width', value: Math.round(columnHeader.width())},
+                        {name: $this.id + '_height', value: Math.round(columnHeader.height())}
                     ]
                 }
                 
