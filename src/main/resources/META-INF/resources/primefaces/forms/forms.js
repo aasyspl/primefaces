@@ -3282,6 +3282,14 @@ PrimeFaces.widget.InputMask = PrimeFaces.widget.BaseWidget.extend({
         this._super(cfg);
 
         if(this.cfg.mask) {
+            var originalOnchange = this.jq.prop('onchange');
+            if(originalOnchange) {
+                this.cfg.onChange = originalOnchange;
+                this.jq.prop('onchange', null);
+            }
+
+            this.jq.bind('paste', function () { $(this).val(''); });
+
             this.jq.mask(this.cfg.mask, this.cfg);
         }
 
