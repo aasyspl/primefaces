@@ -3033,7 +3033,10 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             uncheckedInput.prop('checked', false).attr('aria-checked', false);
 
             if(updateInput) {
-                var input = this.inputs.eq(item.index());
+                // AASYS: fix for checkbox unselection on grouped list
+                var numOfGroupItem = item.prevAll('li.ui-selectcheckboxmenu-group-item').length;
+                var input = this.inputs.eq(item.index()-numOfGroupItem);
+                // AASYS
                 input.prop('checked', false).attr('aria-checked', false).change();
                 uncheckedInput.trigger('focus.selectCheckboxMenu');
                 this.updateToggler();
