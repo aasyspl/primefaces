@@ -2827,8 +2827,10 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
      * Writes selected row ids to state holder
      */
     writeSelections: function() {
-        if(this.selection.length>0 && this.selection[this.selection.length-1].trim() === ""){
-            this.selection.pop();
+        if(Array.isArray(this.selection) && this.selection.length>0) {
+            if(this.selection[this.selection.length-1] != undefined && this.selection[this.selection.length-1].trim() === ""){
+                this.selection.pop();
+            }
         }
         $(this.selectionHolder).val(this.selection.join(','));
     },
