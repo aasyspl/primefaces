@@ -121,6 +121,13 @@
             <description>Enables data selection, valid values are "single" and "multiple".</description>
 		</attribute>
 		<attribute>
+			<name>multiSelectWithoutCtrl</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+			<defaultValue>false</defaultValue>
+			<description>Enables multi selection without CTRL key</description>
+		</attribute>
+		<attribute>
 			<name>selection</name>
 			<required>false</required>
 			<type>java.lang.Object</type>

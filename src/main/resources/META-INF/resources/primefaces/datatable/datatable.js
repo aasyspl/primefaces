@@ -1765,12 +1765,14 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.assignFocusedRow(row);
 
             //unselect a selected row if metakey is on
-            if (selected && metaKey) {
+            if (selected && (metaKey || this.isMultiSelectWithoutCtrl())) {
                 this.unselectRow(row, silent);
             }
             else {
                 //unselect previous selection if this is single selection or multiple one with no keys
-                if (this.isSingleSelection() || (this.isMultipleSelection() && event && !metaKey && !shiftKey && this.cfg.rowSelectMode === 'new' )) {
+                if (this.isSingleSelection() ||
+                    (!this.isMultiSelectWithoutCtrl() && this.isMultipleSelection()
+                    && event && !metaKey && !shiftKey && this.cfg.rowSelectMode === 'new' )) {
                     this.unselectAllRows();
                 }
 
@@ -2841,6 +2843,10 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
     
     isMultipleSelection: function() {
         return this.cfg.selectionMode == 'multiple' || this.isCheckboxSelectionEnabled();
+    },
+
+    isMultiSelectWithoutCtrl: function() {
+        return this.cfg.multiSelectWithoutCtrl;
     },
     
     /**
