@@ -2994,13 +2994,29 @@ links.Timeline.prototype.onMouseUp = function (event) {
             // fire an add or changed event.
             // Note that the change can be canceled from within an event listener if
             // this listener calls the method cancelChange().
-            this.trigger(params.addItem ? 'add' : 'changed');
+//            this.trigger(params.addItem ? 'add' : 'changed');
+
+            //AASYS
+            var groupFinalItems = this.getItemsByGroup(this.items)[item.group.content];
+            var indexOf = groupFinalItems.indexOf(item);
+            if (indexOf >= 0) {
+                groupFinalItems.splice(indexOf, 1);
+            }
+            for (i = 0; i < groupFinalItems.length; i++) {
+                var otherItem = groupFinalItems[i];
+                if (this.collision(item, otherItem, 0)) {
+                    this.cancelChange();
+                    break;
+                }
+            }
+            //AASYS
 
             //retrieve item data again to include changes made to it in the triggered event handlers
             item = this.items[params.itemIndex];
 
             if (params.addItem) {
                 if (this.applyAdd) {
+                    this.trigger('add');
                     this.updateData(params.itemIndex, {
                         'start': item.start,
                         'end': item.end,
@@ -3015,6 +3031,7 @@ links.Timeline.prototype.onMouseUp = function (event) {
             }
             else {
                 if (this.applyChange) {
+                    this.trigger('changed');
                     this.updateData(params.itemIndex, {
                         'start': item.start,
                         'end': item.end
@@ -5206,6 +5223,15 @@ links.Timeline.prototype.unselectItem = function() {
     }
 };
 
+/**
+ * Unselect all items (multiple selected)
+ */
+links.Timeline.prototype.unselectAllItems = function() {
+    var itemsLength = this.items.length;
+    for (var i = 0; i < itemsLength; i++) {
+        this.items[i].unselect()
+    }
+};
 
 /**
  * Stack the items such that they don't overlap. The items will have a minimal
@@ -5583,19 +5609,35 @@ links.Timeline.prototype.collision = function(item1, item2, margin) {
     }
 
     // AASYS if item is free time or not available event don't check collision
-    if (item1.item.className == "service-schedule-timeline-event-free" || item1.item.className == "service-schedule-employee-not-available" ||
-        item2.item.className == "service-schedule-timeline-event-free" || item2.item.className == "service-schedule-employee-not-available") {
+    if (item1.className === undefined || item2.className === undefined) {
+        return false;
+    }
+    if (item1.className == "service-schedule-timeline-event-free" ||
+        item2.className == "service-schedule-timeline-event-free") {
         return false;
     }
     // AASYS
-
+    // round to minutes
+    item1.start.setMilliseconds(0);
+    item1.start.setSeconds(0);
+    item1.end.setMilliseconds(0);
+    item1.end.setSeconds(0);
+    item2.start.setMilliseconds(0);
+    item2.start.setSeconds(0);
+    item2.end.setMilliseconds(0);
+    item2.end.setSeconds(0);
     // calculate if there is overlap (collision)
-    //AASYS checking collision with 2px reserve
-    var precision = 2;
-    return (Math.floor(item1.left) + precision - margin < Math.floor(item2.right) &&
-            Math.floor(item1.right) - precision + margin > Math.floor(item2.left) &&
-            Math.floor(item1.top) + precision - margin < Math.floor(item2.bottom) &&
-            Math.floor(item1.bottom) - precision + margin > Math.floor(item2.top));
+    if (item1.start.getTime() == item2.start.getTime()) {
+        return true;
+    }
+    if (item1.start > item2.start && item1.start < item2.end) {
+        return true;
+    }
+    if (item2.start > item1.start && item2.start < item1.end) {
+        return true;
+    }
+
+    return false;
     //AASYS
 };
 
