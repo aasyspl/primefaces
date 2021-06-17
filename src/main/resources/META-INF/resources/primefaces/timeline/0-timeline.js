@@ -2997,16 +2997,18 @@ links.Timeline.prototype.onMouseUp = function (event) {
 //            this.trigger(params.addItem ? 'add' : 'changed');
 
             //AASYS
-            var groupFinalItems = this.getItemsByGroup(this.items)[item.group.content];
-            var indexOf = groupFinalItems.indexOf(item);
-            if (indexOf >= 0) {
-                groupFinalItems.splice(indexOf, 1);
-            }
-            for (i = 0; i < groupFinalItems.length; i++) {
-                var otherItem = groupFinalItems[i];
-                if (this.collision(item, otherItem, 0)) {
-                    this.cancelChange();
-                    break;
+            if (!item.className.startsWith("car-rental")) {
+                var groupFinalItems = this.getItemsByGroup(this.items)[item.group.content];
+                var indexOf = groupFinalItems.indexOf(item);
+                if (indexOf >= 0) {
+                    groupFinalItems.splice(indexOf, 1);
+                }
+                for (i = 0; i < groupFinalItems.length; i++) {
+                    var otherItem = groupFinalItems[i];
+                    if (this.collision(item, otherItem, 0)) {
+                        this.cancelChange();
+                        break;
+                    }
                 }
             }
             //AASYS
