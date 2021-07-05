@@ -9,6 +9,7 @@
  * scale on the axis is adjusted automatically, and supports scales ranging
  * from milliseconds to years.
  *
+ *
  * Timeline is part of the CHAP Links library.
  *
  * Timeline is tested on Firefox 3.6, Safari 5.0, Chrome 6.0, Opera 10.6, and
@@ -3129,51 +3130,52 @@ links.Timeline.prototype.onDblClick = function (event) {
             this.trigger('edit');
         }
     }
-    else {
-        if (options.editable) {
-            // create a new item
-
-            // get mouse position
-            params.mouseX = links.Timeline.getPageX(event);
-            params.mouseY = links.Timeline.getPageY(event);
-            var x = params.mouseX - links.Timeline.getAbsoluteLeft(dom.content);
-            var y = params.mouseY - links.Timeline.getAbsoluteTop(dom.content);
-
-            // create a new event at the current mouse position
-            var xstart = this.screenToTime(x);
-            if (options.snapEvents) {
-                this.step.snap(xstart);
-            }
-
-            var content = options.NEW;
-            var group = this.getGroupFromHeight(y);   // (group may be undefined)
-            var preventRender = true;
-            this.addItem({
-                'start': xstart,
-                'content': content,
-                'group': this.getGroupName(group)
-            }, preventRender);
-            params.itemIndex = (this.items.length - 1);
-            this.selectItem(params.itemIndex);
-
-            this.applyAdd = true;
-
-            // fire an add event.
-            // Note that the change can be canceled from within an event listener if
-            // this listener calls the method cancelAdd().
-            this.trigger('add');
-
-            if (this.applyAdd) {
-                // render and select the item
-                this.render({animate: false});
-                this.selectItem(params.itemIndex);
-            }
-            else {
-                // undo an add
-                this.deleteItem(params.itemIndex);
-            }
-        }
-    }
+//    DMS-23563 - disable functionality
+//    else {
+//        if (options.editable) {
+//            // create a new item
+//
+//            // get mouse position
+//            params.mouseX = links.Timeline.getPageX(event);
+//            params.mouseY = links.Timeline.getPageY(event);
+//            var x = params.mouseX - links.Timeline.getAbsoluteLeft(dom.content);
+//            var y = params.mouseY - links.Timeline.getAbsoluteTop(dom.content);
+//
+//            // create a new event at the current mouse position
+//            var xstart = this.screenToTime(x);
+//            if (options.snapEvents) {
+//                this.step.snap(xstart);
+//            }
+//
+//            var content = options.NEW;
+//            var group = this.getGroupFromHeight(y);   // (group may be undefined)
+//            var preventRender = true;
+//            this.addItem({
+//                'start': xstart,
+//                'content': content,
+//                'group': this.getGroupName(group)
+//            }, preventRender);
+//            params.itemIndex = (this.items.length - 1);
+//            this.selectItem(params.itemIndex);
+//
+//            this.applyAdd = true;
+//
+//            // fire an add event.
+//            // Note that the change can be canceled from within an event listener if
+//            // this listener calls the method cancelAdd().
+//            this.trigger('add');
+//
+//            if (this.applyAdd) {
+//                // render and select the item
+//                this.render({animate: false});
+//                this.selectItem(params.itemIndex);
+//            }
+//            else {
+//                // undo an add
+//                this.deleteItem(params.itemIndex);
+//            }
+//        }
+//    }
 
     links.Timeline.preventDefault(event);
 };
