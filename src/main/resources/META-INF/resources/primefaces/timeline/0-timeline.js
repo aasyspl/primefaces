@@ -2983,11 +2983,11 @@ links.Timeline.prototype.onMouseUp = function (event) {
     else if (params.editItem) {
         var item = this.items[params.itemIndex];
 
-        //AASYS additionally checking if (start and end) or group changed
+        //AASYS additionally checking if start or end or group changed
         if ((params.moved || params.addItem)
         &&
-        ((item.start.getTime() !== params.itemStart.getTime()
-            && item.end.getTime() !== params.itemEnd.getTime())
+        (item.start.getTime() !== params.itemStart.getTime()
+            || item.end.getTime() !== params.itemEnd.getTime()
             || item.group !== params.itemGroup)
         ) {
             this.applyChange = true;
