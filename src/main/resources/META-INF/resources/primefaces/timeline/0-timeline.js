@@ -222,6 +222,7 @@ links.Timeline = function(container, options) {
         'locale': 'en',
         'MONTHS': ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         'MONTHS_SHORT': ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        'MONTHS_ORDINAL': ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         'DAYS': ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         'DAYS_SHORT': ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         'ZOOM_IN': "Zoom in",
@@ -6581,18 +6582,18 @@ links.Timeline.StepDate.prototype.getLabelMajor = function(options, date) {
                 this.addZeros(date.getSeconds(), 2);
         case links.Timeline.StepDate.SCALE.SECOND:
             return  date.getDate() + " " +
-                options.MONTHS[date.getMonth()] + " " +
+                options.MONTHS_ORDINAL[date.getMonth()] + " " +
                 this.addZeros(date.getHours(), 2) + ":" +
                 this.addZeros(date.getMinutes(), 2);
         case links.Timeline.StepDate.SCALE.MINUTE:
             return  options.DAYS[date.getDay()] + " " +
                 date.getDate() + " " +
-                options.MONTHS[date.getMonth()] + " " +
+                options.MONTHS_ORDINAL[date.getMonth()] + " " +
                 date.getFullYear();
         case links.Timeline.StepDate.SCALE.HOUR:
             return  options.DAYS[date.getDay()] + " " +
                 date.getDate() + " " +
-                options.MONTHS[date.getMonth()] + " " +
+                options.MONTHS_ORDINAL[date.getMonth()] + " " +
                 date.getFullYear();
         case links.Timeline.StepDate.SCALE.WEEKDAY:
         case links.Timeline.StepDate.SCALE.DAY:
