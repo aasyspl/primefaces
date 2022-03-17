@@ -6554,7 +6554,12 @@ links.Timeline.StepDate.prototype.getLabelMinor = function(options, date) {
             return this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
         case links.Timeline.StepDate.SCALE.HOUR:
             return this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
-        case links.Timeline.StepDate.SCALE.WEEKDAY:      return options.DAYS_SHORT[date.getDay()] + ' ' + date.getDate();
+        case links.Timeline.StepDate.SCALE.WEEKDAY:
+            if (options.locale === "hu") {
+              return date.getDate() + "., " + options.DAYS[date.getDay()];
+            } else {
+                return options.DAYS_SHORT[date.getDay()] + ' ' + date.getDate();
+            }
         case links.Timeline.StepDate.SCALE.DAY:          return String(date.getDate());
         case links.Timeline.StepDate.SCALE.MONTH:        return options.MONTHS_SHORT[date.getMonth()];   // month is zero based
         case links.Timeline.StepDate.SCALE.YEAR:         return String(date.getFullYear());
@@ -6575,34 +6580,66 @@ links.Timeline.StepDate.prototype.getLabelMajor = function(options, date) {
         date = this.current;
     }
 
-    switch (this.scale) {
-        case links.Timeline.StepDate.SCALE.MILLISECOND:
-            return  this.addZeros(date.getHours(), 2) + ":" +
-                this.addZeros(date.getMinutes(), 2) + ":" +
-                this.addZeros(date.getSeconds(), 2);
-        case links.Timeline.StepDate.SCALE.SECOND:
-            return  date.getDate() + " " +
-                options.MONTHS_ORDINAL[date.getMonth()] + " " +
-                this.addZeros(date.getHours(), 2) + ":" +
-                this.addZeros(date.getMinutes(), 2);
-        case links.Timeline.StepDate.SCALE.MINUTE:
-            return  options.DAYS[date.getDay()] + " " +
-                date.getDate() + " " +
-                options.MONTHS_ORDINAL[date.getMonth()] + " " +
-                date.getFullYear();
-        case links.Timeline.StepDate.SCALE.HOUR:
-            return  options.DAYS[date.getDay()] + " " +
-                date.getDate() + " " +
-                options.MONTHS_ORDINAL[date.getMonth()] + " " +
-                date.getFullYear();
-        case links.Timeline.StepDate.SCALE.WEEKDAY:
-        case links.Timeline.StepDate.SCALE.DAY:
-            return  options.MONTHS[date.getMonth()] + " " +
-                date.getFullYear();
-        case links.Timeline.StepDate.SCALE.MONTH:
-            return String(date.getFullYear());
-        default:
-            return "";
+    if (options.locale === "hu") {
+        switch (this.scale) {
+            case links.Timeline.StepDate.SCALE.MILLISECOND:
+                return  this.addZeros(date.getHours(), 2) + ":" +
+                    this.addZeros(date.getMinutes(), 2) + ":" +
+                    this.addZeros(date.getSeconds(), 2);
+            case links.Timeline.StepDate.SCALE.SECOND:
+                return  options.MONTHS_ORDINAL[date.getMonth()] + " " +
+                    date.getDate() + ". " +
+                    this.addZeros(date.getHours(), 2) + ":" +
+                    this.addZeros(date.getMinutes(), 2);
+            case links.Timeline.StepDate.SCALE.MINUTE:
+                return  date.getFullYear() + " " +
+                    options.MONTHS_ORDINAL[date.getMonth()] + " " +
+                    date.getDate() + "., " +
+                    options.DAYS[date.getDay()];
+            case links.Timeline.StepDate.SCALE.HOUR:
+                return  date.getFullYear() + " " +
+                    options.MONTHS_ORDINAL[date.getMonth()] + " " +
+                    date.getDate() + "., " +
+                    options.DAYS[date.getDay()];
+            case links.Timeline.StepDate.SCALE.WEEKDAY:
+            case links.Timeline.StepDate.SCALE.DAY:
+                return  date.getFullYear() + " " +
+                    options.MONTHS[date.getMonth()];
+            case links.Timeline.StepDate.SCALE.MONTH:
+                return String(date.getFullYear());
+            default:
+                return "";
+        }
+    } else {
+        switch (this.scale) {
+            case links.Timeline.StepDate.SCALE.MILLISECOND:
+                return  this.addZeros(date.getHours(), 2) + ":" +
+                    this.addZeros(date.getMinutes(), 2) + ":" +
+                    this.addZeros(date.getSeconds(), 2);
+            case links.Timeline.StepDate.SCALE.SECOND:
+                return  date.getDate() + " " +
+                    options.MONTHS_ORDINAL[date.getMonth()] + " " +
+                    this.addZeros(date.getHours(), 2) + ":" +
+                    this.addZeros(date.getMinutes(), 2);
+            case links.Timeline.StepDate.SCALE.MINUTE:
+                return  options.DAYS[date.getDay()] + " " +
+                    date.getDate() + " " +
+                    options.MONTHS_ORDINAL[date.getMonth()] + " " +
+                    date.getFullYear();
+            case links.Timeline.StepDate.SCALE.HOUR:
+                return  options.DAYS[date.getDay()] + " " +
+                    date.getDate() + " " +
+                    options.MONTHS_ORDINAL[date.getMonth()] + " " +
+                    date.getFullYear();
+            case links.Timeline.StepDate.SCALE.WEEKDAY:
+            case links.Timeline.StepDate.SCALE.DAY:
+                return  options.MONTHS[date.getMonth()] + " " +
+                    date.getFullYear();
+            case links.Timeline.StepDate.SCALE.MONTH:
+                return String(date.getFullYear());
+            default:
+                return "";
+        }
     }
 };
 
