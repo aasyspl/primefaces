@@ -742,7 +742,7 @@ $.layout.defaults = {
 		}
 	//	HOT-KEYS & MISC
 	,	showOverflowOnHover:	false		// will bind allowOverflow() utility to pane.onMouseOver
-	,	enableCursorHotkey:		true		// enabled 'cursor' hotkeys
+	,	enableCursorHotkey:		false		// enabled 'cursor' hotkeys
 	//,	customHotkey:			""			// MUST be pane-specific - EITHER a charCode OR a character
 	,	customHotkeyModifier:	"SHIFT"		// either 'SHIFT', 'CTRL' or 'CTRL+SHIFT' - NOT 'ALT'
 	//	PANE ANIMATION
