@@ -1173,6 +1173,24 @@
                                     <shadedPattern>/jakarta.faces</shadedPattern>
                                     <rawString>true</rawString>
                                 </relocation>
+                                <!-- AASYS - the two relocations above only rewrite compiled .class
+                                     bytecode references and the one slash-prefixed resource-URL
+                                     shape; primefaces.taglib.xml/faces-config.xml also carry bare
+                                     javax.faces.*/javax.el.* strings inside function-signature and
+                                     type elements (e.g. "javax.faces.component.UIComponent"), which
+                                     Class.forName() at runtime fails to resolve once the actual
+                                     classpath is jakarta-only. rawString makes the relocator rewrite
+                                     that resource-file text too, not just bytecode. -->
+                                <relocation>
+                                    <pattern>javax.faces</pattern>
+                                    <shadedPattern>jakarta.faces</shadedPattern>
+                                    <rawString>true</rawString>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javax.el</pattern>
+                                    <shadedPattern>jakarta.el</shadedPattern>
+                                    <rawString>true</rawString>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
