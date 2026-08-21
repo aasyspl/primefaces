@@ -68,11 +68,38 @@ public abstract class PickListBase extends UIInput implements Widget, ClientBeha
         escapeValue,
         transferOnDblclick,
         transferOnCheckboxClick,
-        filterNormalize
+        filterNormalize,
+        renderButtons,
+        renderSource,
+        renderTarget
     }
 
     public PickListBase() {
         setRendererType(DEFAULT_RENDERER);
+    }
+
+    public boolean isRenderButtons() {
+        return (Boolean) getStateHelper().eval(PropertyKeys.renderButtons, true);
+    }
+
+    public void setRenderButtons(boolean renderButtons) {
+        getStateHelper().put(PropertyKeys.renderButtons, renderButtons);
+    }
+
+    public boolean isRenderSource() {
+        return (Boolean) getStateHelper().eval(PropertyKeys.renderSource, true);
+    }
+
+    public void setRenderSource(boolean renderSource) {
+        getStateHelper().put(PropertyKeys.renderSource, renderSource);
+    }
+
+    public boolean isRenderTarget() {
+        return (Boolean) getStateHelper().eval(PropertyKeys.renderTarget, true);
+    }
+
+    public void setRenderTarget(boolean renderTarget) {
+        getStateHelper().put(PropertyKeys.renderTarget, renderTarget);
     }
 
     @Override

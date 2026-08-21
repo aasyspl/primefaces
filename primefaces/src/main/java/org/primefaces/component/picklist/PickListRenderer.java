@@ -102,32 +102,38 @@ public class PickListRenderer extends InputRenderer {
         }
 
         //Source List
-        encodeList(context, pickList, clientId + "_source", PickList.SOURCE_CLASS, model.getSource(),
-                pickList.getFacet("sourceCaption"), pickList.isShowSourceFilter(), true);
+        if (pickList.isRenderSource()) {
+            encodeList(context, pickList, clientId + "_source", PickList.SOURCE_CLASS, model.getSource(),
+                    pickList.getFacet("sourceCaption"), pickList.isShowSourceFilter(), true);
+        }
 
         //Buttons
-        writer.startElement("div", null);
-        writer.writeAttribute("class", PickList.BUTTONS_CLASS, null);
-        writer.startElement("div", null);
-        writer.writeAttribute("class", PickList.BUTTONS_CELL_CLASS, null);
-        if (vertical) {
-            encodeButton(context, PickList.ADD_BUTTON_CLASS, PickList.VERTICAL_ADD_BUTTON_ICON_CLASS, labelDisplay);
-            encodeButton(context, PickList.ADD_ALL_BUTTON_CLASS, PickList.VERTICAL_ADD_ALL_BUTTON_ICON_CLASS, labelDisplay);
-            encodeButton(context, PickList.REMOVE_BUTTON_CLASS, PickList.VERTICAL_REMOVE_BUTTON_ICON_CLASS, labelDisplay);
-            encodeButton(context, PickList.REMOVE_ALL_BUTTON_CLASS, PickList.VERTICAL_REMOVE_ALL_BUTTON_ICON_CLASS, labelDisplay);
+        if (pickList.isRenderButtons()) {
+            writer.startElement("div", null);
+            writer.writeAttribute("class", PickList.BUTTONS_CLASS, null);
+            writer.startElement("div", null);
+            writer.writeAttribute("class", PickList.BUTTONS_CELL_CLASS, null);
+            if (vertical) {
+                encodeButton(context, PickList.ADD_BUTTON_CLASS, PickList.VERTICAL_ADD_BUTTON_ICON_CLASS, labelDisplay);
+                encodeButton(context, PickList.ADD_ALL_BUTTON_CLASS, PickList.VERTICAL_ADD_ALL_BUTTON_ICON_CLASS, labelDisplay);
+                encodeButton(context, PickList.REMOVE_BUTTON_CLASS, PickList.VERTICAL_REMOVE_BUTTON_ICON_CLASS, labelDisplay);
+                encodeButton(context, PickList.REMOVE_ALL_BUTTON_CLASS, PickList.VERTICAL_REMOVE_ALL_BUTTON_ICON_CLASS, labelDisplay);
+            }
+            else {
+                encodeButton(context, PickList.ADD_BUTTON_CLASS, PickList.ADD_BUTTON_ICON_CLASS, labelDisplay);
+                encodeButton(context, PickList.ADD_ALL_BUTTON_CLASS, PickList.ADD_ALL_BUTTON_ICON_CLASS, labelDisplay);
+                encodeButton(context, PickList.REMOVE_BUTTON_CLASS, PickList.REMOVE_BUTTON_ICON_CLASS, labelDisplay);
+                encodeButton(context, PickList.REMOVE_ALL_BUTTON_CLASS, PickList.REMOVE_ALL_BUTTON_ICON_CLASS, labelDisplay);
+            }
+            writer.endElement("div");
+            writer.endElement("div");
         }
-        else {
-            encodeButton(context, PickList.ADD_BUTTON_CLASS, PickList.ADD_BUTTON_ICON_CLASS, labelDisplay);
-            encodeButton(context, PickList.ADD_ALL_BUTTON_CLASS, PickList.ADD_ALL_BUTTON_ICON_CLASS, labelDisplay);
-            encodeButton(context, PickList.REMOVE_BUTTON_CLASS, PickList.REMOVE_BUTTON_ICON_CLASS, labelDisplay);
-            encodeButton(context, PickList.REMOVE_ALL_BUTTON_CLASS, PickList.REMOVE_ALL_BUTTON_ICON_CLASS, labelDisplay);
-        }
-        writer.endElement("div");
-        writer.endElement("div");
 
         //Target List
-        encodeList(context, pickList, clientId + "_target", PickList.TARGET_CLASS, model.getTarget(),
-                pickList.getFacet("targetCaption"), pickList.isShowTargetFilter(), false);
+        if (pickList.isRenderTarget()) {
+            encodeList(context, pickList, clientId + "_target", PickList.TARGET_CLASS, model.getTarget(),
+                    pickList.getFacet("targetCaption"), pickList.isShowTargetFilter(), false);
+        }
 
         //Target List Reorder Buttons
         if (pickList.isShowTargetControls()) {
