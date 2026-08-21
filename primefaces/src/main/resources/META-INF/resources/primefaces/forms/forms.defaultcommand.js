@@ -48,7 +48,10 @@ PrimeFaces.widget.DefaultCommand = PrimeFaces.widget.BaseWidget.extend({
             data = data || e.data;
             if (($this.scope && data.scopeEnter && data.scopeDefaultCommandId === $this.id) || (!$this.scope && !data.scopeEnter) || ($this.scope && $this.scope[0] === closestForm[0])) {
                 // #7028/#13927 Do not proceed if target is a textarea, button, link, or TextEditor
-                if (PrimeFaces.utils.isEnterKeyBlocked(e)) {
+                // AASYS - also skip when this DefaultCommand is scoped and the Enter key target
+                // sits outside that scope's own DOM subtree, so a scoped default command does not
+                // fire for keypresses happening elsewhere in the same form.
+                if (PrimeFaces.utils.isEnterKeyBlocked(e) || ($this.scope && $this.scope.find(e.target).length === 0)) {
                     return true;
                 }
                 if (!$this.jqTarget.is(':disabled, .ui-state-disabled')) {

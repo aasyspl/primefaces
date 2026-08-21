@@ -1653,6 +1653,11 @@ $.extend( Datepicker.prototype, {
 			newDate.setSeconds( 0 );
 			newDate.setMilliseconds( 0 );
 		}
+		// AASYS - fall back to defaultDate instead of proceeding with a falsy newDate (seen with
+		// timeOnly calendars, where the picker would otherwise fail to open).
+		else {
+			newDate = defaultDate;
+		}
 		return this._daylightSavingAdjust( newDate );
 	},
 

@@ -100,6 +100,39 @@ PrimeFaces.widget.SelectManyMenu = PrimeFaces.widget.SelectListbox.extend({
                 $this.onKeyDown(event);
             });
 
+            // AASYS - select the row on right-click too, so the app's own context menu options
+            // work on it (they only apply to the currently-selected row/rows). Bound after the
+            // click/keydown chain above, which starts with an unnamespaced this.items.off() that
+            // would otherwise immediately unbind this handler too.
+            this.items.on('contextmenu.selectListbox', function(e) {
+                var item = $(this),
+                    selectedItems = $this.items.filter('.ui-state-highlight'),
+                    metaKey = (e.metaKey || e.ctrlKey),
+                    unchanged = (!metaKey && selectedItems.length === 1 && selectedItems.index() === item.index());
+
+                if (!e.shiftKey) {
+                    if (!metaKey) {
+                        $this.unselectAll();
+                    }
+
+                    if (metaKey && item.hasClass('ui-state-highlight')) {
+                        $this.unselectItem(item);
+                    }
+                    else {
+                        $this.selectItem(item);
+                        $this.cursorItem = item;
+                    }
+                }
+
+                if (!unchanged) {
+                    $this.input.trigger('change');
+                }
+
+                $this.input.trigger('click');
+                PrimeFaces.clearSelection();
+                e.preventDefault();
+            });
+
             if (this.cfg.showCheckbox) {
                 this.checkboxes = this.jq.find('.ui-selectlistbox-item:not(.ui-state-disabled) div.ui-chkbox > div.ui-chkbox-box');
 

@@ -874,9 +874,10 @@ PrimeFaces.widget.SelectOneMenu = PrimeFaces.widget.DeferredWidget.extend({
                 PrimeFaces.scrollInView(this.itemsWrapper, next);
             }
             this.changeAriaValue(next);
+            // AASYS - only suppress the browser's own default action when a value change actually
+            // happened here; e.g. Alt+Down opening the panel should not be blocked.
+            event.preventDefault();
         }
-
-        event.preventDefault();
     },
 
     /**
