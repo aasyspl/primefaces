@@ -45,6 +45,7 @@ public abstract class FileUploadBase extends UIInput implements Widget {
         chooseButtonStyleClass,
         chooseButtonTitle,
         chooseIcon,
+        descriptionLabel,
         disabled,
         displayFilename,
         dragDrop,
@@ -73,6 +74,7 @@ public abstract class FileUploadBase extends UIInput implements Widget {
         style,
         styleClass,
         title,
+        titleLabel,
         update,
         uploadButtonStyleClass,
         uploadButtonTitle,
@@ -80,7 +82,9 @@ public abstract class FileUploadBase extends UIInput implements Widget {
         uploadLabel,
         validateContentType,
         virusScan,
-        widgetVar
+        widgetVar,
+        withDescription,
+        withTitle
     }
 
     public FileUploadBase() {
@@ -450,5 +454,41 @@ public abstract class FileUploadBase extends UIInput implements Widget {
 
     public void setIgnoreAutoUpdate(boolean ignoreAutoUpdate) {
         getStateHelper().put(PropertyKeys.ignoreAutoUpdate, ignoreAutoUpdate);
+    }
+
+    // Getter and setter for the 'descriptionLabel' property
+    public void setDescriptionLabel(String descriptionLabel) {
+        getStateHelper().put(PropertyKeys.descriptionLabel, descriptionLabel);
+    }
+
+    public String getDescriptionLabel() {
+        return (String) getStateHelper().eval(PropertyKeys.descriptionLabel, "Description");
+    }
+
+    // Getter and setter for the 'withDescription' property
+    public void setWithDescription(boolean withDescription) {
+        getStateHelper().put(PropertyKeys.withDescription, withDescription);
+    }
+
+    public boolean isWithDescription() {
+        return (boolean) getStateHelper().eval(PropertyKeys.withDescription, false);
+    }
+
+    // Getter and setter for the 'titleLabel' property
+    public void setTitleLabel(String titleLabel) {
+        getStateHelper().put(PropertyKeys.titleLabel, titleLabel);
+    }
+
+    public String getTitleLabel() {
+        return (String) getStateHelper().eval(PropertyKeys.titleLabel, "Title");
+    }
+
+    // Getter and setter for the 'withTitle' property
+    public void setWithTitle(boolean withTitle) {
+        getStateHelper().put(PropertyKeys.withTitle, withTitle);
+    }
+
+    public boolean isWithTitle() {
+        return (boolean) getStateHelper().eval(PropertyKeys.withTitle, false);
     }
 }

@@ -67,7 +67,12 @@ public class NativeFileUploadDecoder extends AbstractFileUploadDecoder<HttpServl
             return null;
         }
 
-        return new NativeUploadedFile(part, fileUpload.getSizeLimit(), FileUploadUtils.getWebkitRelativePath(request));
+        // AASYS
+        Part titlePart = request.getPart(FileUpload.COMPONENT_TITLE_PART);
+        Part descriptionPart = request.getPart(FileUpload.COMPONENT_DESCRIPTION_PART);
+
+        return new NativeUploadedFile(part, fileUpload.getSizeLimit(), FileUploadUtils.getWebkitRelativePath(request),
+                titlePart, descriptionPart);
     }
 
     @Override

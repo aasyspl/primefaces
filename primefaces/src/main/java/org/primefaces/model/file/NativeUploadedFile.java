@@ -27,8 +27,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 
 import javax.servlet.http.Part;
+
+import org.apache.commons.io.IOUtils;
 
 public class NativeUploadedFile extends AbstractUploadedFile<Part> implements Serializable {
 
@@ -40,6 +43,25 @@ public class NativeUploadedFile extends AbstractUploadedFile<Part> implements Se
 
     public NativeUploadedFile(Part source, Long sizeLimit, String webKitRelativePath) {
         super(source, source.getSubmittedFileName(), sizeLimit, webKitRelativePath);
+    }
+
+    // AASYS
+    public NativeUploadedFile(Part source, Long sizeLimit, String webKitRelativePath, Part titlePart, Part descriptionPart) {
+        super(source, source.getSubmittedFileName(), sizeLimit, webKitRelativePath,
+                resolveStringPart(titlePart), resolveStringPart(descriptionPart));
+    }
+
+    private static String resolveStringPart(Part part) {
+        if (part != null) {
+            try {
+                String result = IOUtils.toString(part.getInputStream(), Charset.defaultCharset());
+                return result != null ? result : "";
+            }
+            catch (IOException e) {
+                // fall through to null below
+            }
+        }
+        return null;
     }
 
     @Override

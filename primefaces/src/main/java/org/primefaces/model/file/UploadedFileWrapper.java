@@ -112,4 +112,14 @@ public class UploadedFileWrapper implements UploadedFile, FacesWrapper<UploadedF
     public void delete() throws IOException {
         getWrapped().delete();
     }
+
+    @Override
+    public String getDescription() {
+        return getWrapped().getDescription();
+    }
+
+    @Override
+    public String getTitle() {
+        return getWrapped().getTitle();
+    }
 }

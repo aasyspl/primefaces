@@ -77,6 +77,10 @@ public class FileUploadRenderer extends CoreRenderer {
             PrimeApplicationContext pfContext = PrimeApplicationContext.getCurrentInstance(context);
 
             wb.init("FileUpload", fileUpload)
+                    .attr("descriptionLabel", fileUpload.getDescriptionLabel(), "Description")
+                    .attr("withDescription", fileUpload.isWithDescription(), false)
+                    .attr("titleLabel", fileUpload.getTitleLabel(), "Title")
+                    .attr("withTitle", fileUpload.isWithTitle(), false)
                     .attr("dnd", fileUpload.isDragDrop(), true)
                     .attr("previewWidth", fileUpload.getPreviewWidth(), 80)
                     .attr("sequentialUploads", fileUpload.isSequential(), false)

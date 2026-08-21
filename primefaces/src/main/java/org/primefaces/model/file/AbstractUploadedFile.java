@@ -42,6 +42,8 @@ public abstract class AbstractUploadedFile<T> implements UploadedFile, Serializa
     private Long sizeLimit;
     private String webKitRelativePath;
     private transient T source;
+    private String title;
+    private String description;
 
     protected AbstractUploadedFile() {
         // NOOP
@@ -52,6 +54,14 @@ public abstract class AbstractUploadedFile<T> implements UploadedFile, Serializa
         this.filename = filename;
         this.sizeLimit = sizeLimit;
         this.webKitRelativePath = webKitRelativePath;
+    }
+
+    // AASYS
+    protected AbstractUploadedFile(T source, String filename, Long sizeLimit, String webKitRelativePath,
+                                    String title, String description) {
+        this(source, filename, sizeLimit, webKitRelativePath);
+        this.title = title;
+        this.description = description;
     }
 
     @Override
@@ -103,4 +113,15 @@ public abstract class AbstractUploadedFile<T> implements UploadedFile, Serializa
     protected abstract InputStream getSourceInputStream() throws IOException;
 
     protected abstract void write(File file) throws IOException;
+
+    // AASYS
+    @Override
+    public String getTitle() {
+        return title != null ? title : "";
+    }
+
+    @Override
+    public String getDescription() {
+        return description != null ? description : "";
+    }
 }

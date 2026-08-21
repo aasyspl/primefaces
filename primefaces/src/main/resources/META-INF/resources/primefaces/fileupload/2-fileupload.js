@@ -140,6 +140,10 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
         this.cfg.global = this.cfg.global !== false;
         this.uploadedFileCount = 0;
         this.fileId = 0;
+        this.cfg.descriptionLabel = this.cfg.descriptionLabel || 'Description';
+        this.cfg.withDescription = this.cfg.withDescription || false;
+        this.cfg.titleLabel = this.cfg.titleLabel || 'Title';
+        this.cfg.withTitle = this.cfg.withTitle || false;
         this.dropZone = null;
         if (this.cfg.dnd !== false) {
             this.dropZone = this.cfg.dropZone !== undefined
@@ -468,6 +472,30 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
             $('<div class="ui-widget-content"></div>').prependTo(row);
         }
 
+        // AASYS: per-file title/description inputs
+        if(!$this.rowSeq) {
+            $this.rowSeq = 0;
+        }
+
+        var titleId = null, descriptionId = null;
+
+        if($this.cfg.withTitle) {
+            titleId = $this.id + ":fileTitle-" + $this.rowSeq;
+        }
+
+        if($this.cfg.withDescription) {
+            descriptionId = $this.id + ":fileDescription-" + $this.rowSeq;
+        }
+
+        if(titleId)
+            row.append('<div class="ui-fileupload-file-title-container"><label class="ui-outputlabel ui-widget ui-file-upload-title-label">' + $this.cfg.titleLabel +'</label>' +
+                '<input id="'+ titleId + '" type="text" maxlength="30" autocomplete="off" title="" onblur="return PrimeFaces.vi(this)" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all ui-file-upload-title-input" data-p-label="' + $this.cfg.titleLabel + '" role="textbox" aria-disabled="false" aria-readonly="false"></div>');
+
+        if(descriptionId)
+            row.append('<div class="ui-fileupload-file-description-container"><label class="ui-outputlabel ui-widget ui-file-upload-description-label">' + $this.cfg.descriptionLabel +'</label>' +
+                '<textarea rows="2" id="'+ descriptionId + '" maxlength="255"  autocomplete="off" title="" onblur="return PrimeFaces.vi(this)" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all ui-file-upload-description-input" data-p-label="' + $this.cfg.descriptionLabel + '" aria-disabled="false" aria-readonly="false"></textarea></div>');
+        // AASYS
+
         //preview
         if(window.File && window.FileReader && $this.IMAGE_TYPES.test(file.name)) {
             var imageCanvas = $('<canvas></canvas>')
@@ -505,13 +533,34 @@ PrimeFaces.widget.FileUpload = PrimeFaces.widget.BaseWidget.extend({
         file.row.data('fileId', this.fileId++);
         file.row.data('filedata', data);
 
+        $this.createFileInputProperties(file, "description", "withDescription", "fileDescription", "textarea");
+        $this.createFileInputProperties(file, "title", "withTitle", "fileTitle", "input");
+
         this.files.push(file);
 
         if(this.cfg.auto) {
             this.upload();
         }
+        $this.rowSeq++;
 
         this.postSelectFile(data);
+    },
+
+    /**
+     * Reads back the title/description &lt;input&gt;/&lt;textarea&gt; created for a file row and
+     * attaches it (plus the widget's current withXxx flag) onto the file object, so
+     * {@link PrimeFaces.widget.FileUpload#addFileToRow}'s ajax submit can read the value.
+     * @private
+     * @param {File} file The file to attach the properties to.
+     * @param {string} propertyName Name of the property to set on the file object ("title" or "description").
+     * @param {string} withPropertyName Name of the corresponding this.cfg.withXxx flag.
+     * @param {string} id Substring of the input's id ("fileTitle" or "fileDescription").
+     * @param {string} type Tag name of the input element ("input" or "textarea").
+     */
+    createFileInputProperties: function (file, propertyName, withPropertyName, id, type){
+        var input = file.row.find(type + "[id*='" + id + "']");
+        file[propertyName] = input && input[0];
+        file[withPropertyName] = this.cfg[withPropertyName];
     },
 
     /**

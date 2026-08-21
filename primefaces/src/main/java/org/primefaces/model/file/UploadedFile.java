@@ -44,4 +44,8 @@ public interface UploadedFile {
     File write(String directoryPath) throws Exception;
 
     void delete() throws IOException;
+
+    String getDescription();
+
+    String getTitle();
 }
