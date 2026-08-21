@@ -41,11 +41,13 @@ public abstract class SelectCheckboxMenuBase extends HtmlSelectManyCheckbox impl
         caseSensitive,
         dynamic,
         emptyLabel,
+        emptyMultipleLabel,
         filter,
         filterFunction,
         filterMatchMode,
         filterNormalize,
         filterPlaceholder,
+        fullMultipleLabel,
         labelSeparator,
         multiple,
         onHide,
@@ -266,5 +268,21 @@ public abstract class SelectCheckboxMenuBase extends HtmlSelectManyCheckbox impl
 
     public void setFilterNormalize(boolean filterNormalize) {
         getStateHelper().put(PropertyKeys.filterNormalize, filterNormalize);
+    }
+
+    public String getEmptyMultipleLabel() {
+        return (String) getStateHelper().eval(PropertyKeys.emptyMultipleLabel, null);
+    }
+
+    public void setEmptyMultipleLabel(String emptyMultipleLabel) {
+        getStateHelper().put(PropertyKeys.emptyMultipleLabel, emptyMultipleLabel);
+    }
+
+    public String getFullMultipleLabel() {
+        return (String) getStateHelper().eval(PropertyKeys.fullMultipleLabel, null);
+    }
+
+    public void setFullMultipleLabel(String fullMultipleLabel) {
+        getStateHelper().put(PropertyKeys.fullMultipleLabel, fullMultipleLabel);
     }
 }

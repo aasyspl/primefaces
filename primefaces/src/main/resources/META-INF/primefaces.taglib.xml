@@ -23689,6 +23689,16 @@
             <type>java.lang.Boolean</type>
         </attribute>
         <attribute>
+            <name>emptyMultipleLabel</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>fullMultipleLabel</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
             <description>
                 <![CDATA[Optional
                 attribute that is a literal string that is the fully qualified
