@@ -2768,12 +2768,14 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.assignFocusedRow(row);
 
             // Unselect a selected row if meta key is on
-            if(selected && metaKey) {
+            if (selected && (metaKey || this.isMultiSelectWithoutCtrl())) {
                 this.unselectRow(row, silent);
             }
             else {
                 //unselect previous selection if this is single selection or multiple one with no keys
-                if(this.isSingleSelection() || (this.isMultipleSelection() && event && !metaKey && !shiftKey && this.cfg.selectionRowMode === 'new' )) {
+                if (this.isSingleSelection() ||
+                    (!this.isMultiSelectWithoutCtrl() && this.isMultipleSelection()
+                        && event && !metaKey && !shiftKey && this.cfg.selectionRowMode === 'new' )) {
                     this.unselectAllRows();
                 }
 

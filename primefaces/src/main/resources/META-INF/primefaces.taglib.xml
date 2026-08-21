@@ -9045,6 +9045,14 @@
         </attribute>
         <attribute>
             <description>
+                <![CDATA[Enables multi selection without CTRL key.]]>
+            </description>
+            <name>multiSelectWithoutCtrl</name>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>
                 <![CDATA[Whether to keep table state across views, defaults to false.]]>
             </description>
             <name>multiViewState</name>
