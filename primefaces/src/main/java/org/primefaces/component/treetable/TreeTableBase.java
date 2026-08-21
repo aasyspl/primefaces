@@ -93,6 +93,7 @@ public abstract class TreeTableBase extends UITree implements Widget, ClientBeha
         saveOnCellBlur,
         showGridlines,
         size,
+        resizeMode,
         exportTag,
         exportRowTag
     }
@@ -215,6 +216,14 @@ public abstract class TreeTableBase extends UITree implements Widget, ClientBeha
 
     public void setLiveResize(boolean liveResize) {
         getStateHelper().put(PropertyKeys.liveResize, liveResize);
+    }
+
+    public String getResizeMode() {
+        return (String) getStateHelper().eval(PropertyKeys.resizeMode, null);
+    }
+
+    public void setResizeMode(String resizeMode) {
+        getStateHelper().put(PropertyKeys.resizeMode, resizeMode);
     }
 
     @Override

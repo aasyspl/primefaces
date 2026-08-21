@@ -30623,6 +30623,14 @@
         </attribute>
         <attribute>
             <description>
+                <![CDATA[Defines the resize behavior, valid values are "fit" (default) and expand.]]>
+            </description>
+            <name>resizeMode</name>
+            <required>false</required>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>
                 <![CDATA[Validation constraint for selection.]]>
             </description>
             <name>required</name>
