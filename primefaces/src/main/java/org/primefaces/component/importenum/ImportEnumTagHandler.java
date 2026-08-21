@@ -25,12 +25,16 @@ package org.primefaces.component.importenum;
 
 import org.primefaces.context.PrimeApplicationContext;
 import org.primefaces.util.LangUtils;
+import org.primefaces.util.SharedStringBuilder;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.application.ProjectStage;
 import javax.faces.component.UIComponent;
@@ -46,6 +50,7 @@ import javax.faces.view.facelets.TagHandler;
 public class ImportEnumTagHandler extends TagHandler {
     private static final String DEFAULT_ALL_SUFFIX = "ALL_VALUES";
     private static final Logger LOG = Logger.getLogger(ImportEnumTagHandler.class.getName());
+    private static final String SB_VAR = ImportEnumTagHandler.class.getName() + "#var";
 
     private final TagAttribute typeTagAttribute;
     private final TagAttribute varTagAttribute;
@@ -77,7 +82,19 @@ public class ImportEnumTagHandler extends TagHandler {
             var = varTagAttribute.getValue(ctx);
         }
 
-        ctx.setAttribute(var, enumValues);
+        if (var.charAt(0) != '#') {
+            StringBuilder varBuilder = SharedStringBuilder.get(facesContext, SB_VAR, var.length() + 3);
+            varBuilder.append("#{").append(var).append("}");
+
+            var = varBuilder.toString();
+        }
+
+        // Assign enum values to alias/var expression
+        ELContext elContext = facesContext.getELContext();
+        ExpressionFactory expressionFactory = facesContext.getApplication().getExpressionFactory();
+
+        ValueExpression aliasValueExpression = expressionFactory.createValueExpression(elContext, var, Map.class);
+        aliasValueExpression.setValue(elContext, enumValues);
     }
 
     /**
