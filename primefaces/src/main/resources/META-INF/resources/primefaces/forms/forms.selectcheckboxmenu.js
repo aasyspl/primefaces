@@ -121,6 +121,12 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
     init: function(cfg) {
         this._super(cfg);
 
+        // AASYS - constant classes for custom multiple labels
+        this.CUSTOM_TOKEN_CLASS = "ui-selectcheckboxmenu-custom-token";
+        this.EMPTY_TOKEN_CLASS = "ui-selectcheckboxmenu-empty-token";
+        this.FULL_TOKEN_CLASS = "ui-selectcheckboxmenu-full-token";
+        // AASYS
+
         this.labelContainer = this.jq.find('.ui-selectcheckboxmenu-label-container');
         this.label = this.jq.find('.ui-selectcheckboxmenu-label');
         this.menuIcon = this.jq.children('.ui-selectcheckboxmenu-trigger');
@@ -336,9 +342,9 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
                 item.attr('title', title);
             }
 
-            if ($this.cfg.multiple) {
-                item.attr('data-item-value', input.val());
-            }
+            // AASYS In PrimeFaces this is set when $this.cfg.multiple is equal true but was always undefined - bug
+            item.attr('data-item-value', input.val());
+            // AASYS
 
             item.find('> .ui-chkbox > .ui-helper-hidden-accessible > input')
                 .prop('checked', checked)
@@ -778,6 +784,9 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         var $this = this;
         this.multiItemContainer = this.jq.children('.ui-selectcheckboxmenu-multiple-container');
 
+        // AASYS Add multiple item for empty value
+        this.addCustomMultipleItemIfNeeded();
+        // AASYS
         var closeSelector = '> li.ui-selectcheckboxmenu-token > .ui-selectcheckboxmenu-token-icon';
         this.multiItemContainer.off('click', closeSelector).on('click', closeSelector, null, function(e) {
             if (!$this.isLoaded()) {
@@ -1037,12 +1046,17 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             }
 
             if (this.cfg.multiple) {
+                this.multiItemContainer.empty(); // AASYS
                 this.alignPanel();
             }
 
             this.fireToggleSelectEvent(false);
+
+            // AASYS Add multiple item for empty value
+            this.addCustomMultipleItemIfNeeded();
+            // AASYS
         }
-        
+
         this.renderLabel();
     },
 
@@ -1373,9 +1387,7 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
             label = PrimeFaces.escapeHTML(input.val());
         }
 
-        var itemDisplayMarkup = `<li class="ui-selectcheckboxmenu-token ui-state-active" data-item-value="${PrimeFaces.escapeHTML(input.val())}">` +
-                                `<span class="ui-selectcheckboxmenu-token-icon ui-icon ui-icon-close"></span>` +
-                                `<span class="ui-selectcheckboxmenu-token-label">${label}</span></li>`;
+        var itemDisplayMarkup = this.createMultipleItemElement(PrimeFaces.escapeHTML(input.val()), label, true);
 
         if (items.filter('[class="ui-selectcheckboxmenu-emptylabel"]').length) {
             this.multiItemContainer.empty();
@@ -1393,8 +1405,46 @@ PrimeFaces.widget.SelectCheckboxMenu = PrimeFaces.widget.BaseWidget.extend({
         if (items.length) {
             items.filter('[data-item-value="' + CSS.escape(item.data('item-value')) + '"]').remove();
         }
+        // AASYS Add multiple item for empty value
+        if (this.cfg.multiple) {
+            this.addCustomMultipleItemIfNeeded();
+            this.getSelectedItems().each((index, item) => this.createMultipleItem($(item)));
+        }
+        // AASYS
         // update the label if there are no more items to display empty
         this.renderLabel();
+    },
+
+    // AASYS Brand new functions
+    createMultipleItemElement: function(value, label, closeable, additionalClass) {
+        var mainClass = "ui-selectcheckboxmenu-token ui-state-active" + (additionalClass ? " " + additionalClass : "");
+        var multipleItem = `<li class="${mainClass}" data-item-value="${value}">`;
+        if (closeable) multipleItem += `<span class="ui-selectcheckboxmenu-token-icon ui-icon ui-icon-close"></span>`;
+        multipleItem += `<span class="ui-selectcheckboxmenu-token-label">${label}</span></li>`;
+        return multipleItem;
+    },
+
+    // AASYS Brand new functions
+    addCustomMultipleItemIfNeeded: function() {
+        const selectedItemsCount = this.getSelectedItems().length;
+        var multipleItem;
+        if (this.cfg.multiple) {
+            this.multiItemContainer.children().filter("." + this.CUSTOM_TOKEN_CLASS).remove();
+            if (selectedItemsCount === 0 && this.cfg.emptyMultipleLabel)
+                multipleItem = this.createMultipleItemElement(null, this.cfg.emptyMultipleLabel, false, this.CUSTOM_TOKEN_CLASS + " " + this.EMPTY_TOKEN_CLASS);
+            else if (selectedItemsCount === this.items.length && this.cfg.fullMultipleLabel) {
+                this.multiItemContainer.empty();
+                multipleItem = this.createMultipleItemElement(null, this.cfg.fullMultipleLabel, false, this.CUSTOM_TOKEN_CLASS + " " + this.FULL_TOKEN_CLASS);
+            }
+        }
+        if (multipleItem)
+            this.multiItemContainer.append(multipleItem);
+        return multipleItem;
+    },
+
+    // AASYS Brand new functions
+    getSelectedItems: function() {
+        return this.items.filter(".ui-selectcheckboxmenu-checked");
     },
 
     /**
