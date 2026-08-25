@@ -882,7 +882,6 @@
         <tag-name>ajaxExceptionHandler</tag-name>
         <component>
             <component-type>org.primefaces.component.AjaxExceptionHandler</component-type>
-            <renderer-type>org.primefaces.component.AjaxExceptionHandlerRenderer</renderer-type>
         </component>
         <attribute>
             <description>

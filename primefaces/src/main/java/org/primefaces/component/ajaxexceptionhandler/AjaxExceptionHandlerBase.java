@@ -42,7 +42,7 @@ public abstract class AjaxExceptionHandlerBase extends UIComponentBase implement
     }
 
     public AjaxExceptionHandlerBase() {
-        setRendererType(DEFAULT_RENDERER);
+        setRendererType(null);
     }
 
     @Override
