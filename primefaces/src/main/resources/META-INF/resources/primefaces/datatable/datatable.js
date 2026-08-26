@@ -4449,6 +4449,14 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
     },
 
     /**
+     * Checks whether rows may be selected with a plain click, without holding the meta key.
+     * @return {boolean} `true` if `multiSelectWithoutCtrl` is enabled, or `false` otherwise.
+     */
+    isMultiSelectWithoutCtrl: function() {
+        return this.cfg.multiSelectWithoutCtrl;
+    },
+
+    /**
      * Clears the saved list of selected rows.
      * @private
      */

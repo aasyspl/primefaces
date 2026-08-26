@@ -173,6 +173,7 @@ public class DataTableRenderer extends DataRenderer {
                 .attr("selectionRowMode", table.getSelectionRowMode(), "new")
                 .attr("nativeElements", table.isNativeElements(), false)
                 .attr("rowSelector", table.getRowSelector(), null)
+                .attr("multiSelectWithoutCtrl", table.isMultiSelectWithoutCtrl(), false)
                 .attr("disabledTextSelection", table.isSelectionTextDisabled(), true);
 
         //Filtering
