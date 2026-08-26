@@ -70,6 +70,25 @@ public class SearchExpressionUtils {
     }
 
 
+    private static String stripTrailingSeparators(String expression) {
+        if (expression == null) {
+            return null;
+        }
+
+        int end = expression.length();
+        while (end > 0) {
+            char c = expression.charAt(end - 1);
+            if (c == ',' || Character.isWhitespace(c)) {
+                end--;
+            }
+            else {
+                break;
+            }
+        }
+
+        return end == expression.length() ? expression : expression.substring(0, end);
+    }
+
     public static UIComponent contextlessOptionalResolveComponent(FacesContext context, UIComponent component, String expression) {
         return contextlessResolveComponent(context, component, expression, hintsIgnoreNoResult());
     }
@@ -80,6 +99,8 @@ public class SearchExpressionUtils {
 
     public static UIComponent contextlessResolveComponent(FacesContext context, UIComponent component, String expression,
             Set<SearchExpressionHint> hints) {
+
+        expression = stripTrailingSeparators(expression);
 
         if (LangUtils.isBlank(expression)) {
             return null;
@@ -103,6 +124,8 @@ public class SearchExpressionUtils {
 
     public static List<UIComponent> contextlessResolveComponents(FacesContext context, UIComponent component, String expression,
             Set<SearchExpressionHint> hints) {
+        expression = stripTrailingSeparators(expression);
+
         if (LangUtils.isBlank(expression)) {
             return null;
         }
@@ -126,6 +149,8 @@ public class SearchExpressionUtils {
 
     public static String resolveClientIdsAsString(FacesContext context, UIComponent component, String expression,
                                                   Set<SearchExpressionHint> hints, Set<VisitHint> visitHints) {
+
+        expression = stripTrailingSeparators(expression);
 
         if (LangUtils.isBlank(expression)) {
             return null;
@@ -181,6 +206,8 @@ public class SearchExpressionUtils {
 
     // used by p:resolveClientId
     public static String resolveClientId(String expression, UIComponent source) {
+        expression = stripTrailingSeparators(expression);
+
         if (LangUtils.isBlank(expression)) {
             return null;
         }
