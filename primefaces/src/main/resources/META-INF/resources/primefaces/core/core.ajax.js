@@ -290,7 +290,7 @@ if (!PrimeFaces.ajax) {
                             var $resource = $(this);
                             var src = $resource.attr("href") || $resource.attr("src");
                             var type = this.tagName.toLowerCase();
-                            var $resources = $head.find(type + '[src="' + src + '"], ' + type + '[href="' + src + '"]');
+                            var $resources = $(document).find(type + '[src="' + src + '"], ' + type + '[href="' + src + '"]');
 
                             // Check if script or stylesheet already exists and add it to head if it does not
                             if ($resources.length === 0) {
