@@ -1572,8 +1572,10 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
 
         var valid = false;
 
+        // AASYS keep falsy items as-is so an empty current item still matches an empty value (PF13 semantics)
         for (let item of this.currentItems) {
-            var strippedItem = item ? item.replace(/\r?\n/g, '') : undefined;
+            var strippedItem = item ? item.replace(/\r?\n/g, '') : item;
+            // AASYS
             if (strippedItem === value) {
                 valid = true;
                 break;
