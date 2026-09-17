@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.RandomAccess;
+import java.util.logging.Logger;
 
 import javax.el.ELException;
 import javax.el.ExpressionFactory;
@@ -51,6 +52,8 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 public abstract class SelectRenderer extends InputRenderer {
+
+    private static final Logger LOGGER = Logger.getLogger(SelectRenderer.class.getName());
 
     protected boolean isHideNoSelection(UIComponent component) {
         Object attribute = component.getAttributes().get("hideNoSelectionOption");
@@ -143,7 +146,8 @@ public abstract class SelectRenderer extends InputRenderer {
                         }
                     }
                     else {
-                        throw new FacesException("SelectItems' value type is not compatible: " + value.getClass());
+                        LOGGER.warning("SelectItems' value type is not compatible and was skipped: "
+                                + value.getClass().getName() + " on " + component.getClientId(context));
                     }
                 }
             }
