@@ -292,11 +292,15 @@ PrimeFaces.widget.AutoComplete = PrimeFaces.widget.BaseWidget.extend({
         // AASYS for "single mode with chips" setting permit only ONE chips
         var attribute = this.input[0].attributes["swc"];
         var isSingleModeWithChips = attribute != null && attribute.value == 'T';
-        if(isSingleModeWithChips && this.hinput[0].value.length > 0) {
-            var maxLength = document.createAttribute("maxlength")
-            maxLength.value = 0;
-            this.input[0].attributes.setNamedItem(maxLength);
-            this.cfg.active = false;
+        if (isSingleModeWithChips) {
+            var hasChip = this.hinput[0].value.length > 0;
+            this.input.css('display', hasChip ? 'none' : '');
+            if (hasChip) {
+                var maxLength = document.createAttribute("maxlength")
+                maxLength.value = 0;
+                this.input[0].attributes.setNamedItem(maxLength);
+                this.cfg.active = false;
+            }
         }
         // AASYS
     },
