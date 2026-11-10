@@ -241,10 +241,12 @@ PrimeFaces.widget.PlainMenu = PrimeFaces.widget.Menu.extend({
 
         items.filter('.ui-submenu-child').hide();
 
-        if (stateful) {
+        //AASYS (DMS-12422: do not push duplicate header ids into the stored state)
+        if (stateful && this.collapsedIds.indexOf(header.attr('id')) === -1) {
             this.collapsedIds.push(header.attr('id'));
             this.saveState();
         }
+        //AASYS
     },
 
     /**
@@ -286,11 +288,13 @@ PrimeFaces.widget.PlainMenu = PrimeFaces.widget.Menu.extend({
     restoreState: function() {
         var collapsedIdsAsString = localStorage.getItem(this.stateKey);
 
-        if (collapsedIdsAsString) {
+        //AASYS (upstream issue #15131, official fix PR #15253 lands in 15.0.19: only override
+        //the collapsedIds derived from the rendered HTML when a saved state actually exists;
+        //an empty string is a valid saved state meaning "nothing collapsed")
+        if (collapsedIdsAsString !== null) {
             this.collapsedIds = collapsedIdsAsString.split(',');
-        } else {
-            this.collapsedIds = [];
         }
+        //AASYS
 
         // Iterate through headers once: collapse items in collapsedIds, expand others
         var $this = this;
