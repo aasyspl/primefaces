@@ -47,13 +47,14 @@ PrimeFaces.widget.DefaultCommand = PrimeFaces.widget.BaseWidget.extend({
             }
             data = data || e.data;
             if (($this.scope && data.scopeEnter && data.scopeDefaultCommandId === $this.id) || (!$this.scope && !data.scopeEnter) || ($this.scope && $this.scope[0] === closestForm[0])) {
-                // #7028/#13927 Do not proceed if target is a textarea, button, link, or TextEditor
-                // AASYS - also skip when this DefaultCommand is scoped and the Enter key target
-                // sits outside that scope's own DOM subtree, so a scoped default command does not
-                // fire for keypresses happening elsewhere in the same form.
-                if (PrimeFaces.utils.isEnterKeyBlocked(e) || ($this.scope && $this.scope.find(e.target).length === 0)) {
+                //AASYS (kept in sync with 13.0.10-AASYS: PrimeFaces.utils.isEnterKeyBlocked is
+                //deliberately NOT used because it blocks .ql-editor since #8190, while here Enter
+                //inside a TextEditor must still fire the default command; also skip when a scoped
+                //DefaultCommand gets a keypress from outside its own scope subtree)
+                if (($this.scope && $this.scope.find(e.target).length === 0) || $(e.target).is('textarea,button,input[type="submit"],a')) {
                     return true;
                 }
+                //AASYS
                 if (!$this.jqTarget.is(':disabled, .ui-state-disabled')) {
                     // focus default command button and click it
                     $this.jqTarget.trigger('focus').trigger(PrimeFaces.csp.clickEvent($this.jqTarget));
